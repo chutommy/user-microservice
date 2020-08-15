@@ -2,6 +2,7 @@ package data
 
 import (
 	"context"
+	"database/sql"
 
 	"github.com/chutified/appointments/accounts/models"
 )
@@ -23,4 +24,12 @@ type Database interface {
 
 	// Delete
 	DeleteAccountById(ctx context.Context, id string)
+}
+
+type databaseService struct {
+	db *sql.DB
+}
+
+func New() *databaseService {
+	return &databaseService{}
 }
