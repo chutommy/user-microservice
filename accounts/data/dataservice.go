@@ -1,11 +1,13 @@
 package data
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"time"
 
 	"github.com/chutified/appointments/accounts/config"
+	"github.com/chutified/appointments/accounts/models"
 	"github.com/pkg/errors"
 )
 
@@ -13,9 +15,9 @@ import (
 type databaseService struct{ db *sql.DB }
 
 // New is the contructor for the Database.
-// func New() *Database {
-//     return &databaseService{}
-// }
+func New() Database {
+	return &databaseService{}
+}
 
 // Init initialize the databaseService connection to the database.
 func (ds *databaseService) Init(cfg *config.DBConfig) error {
@@ -61,4 +63,33 @@ func (ds *databaseService) Stop() error {
 	}
 
 	return nil
+}
+
+func (ds *databaseService) AddAccount(ctx context.Context, a *models.Account) (*models.Account, error) {
+
+	return nil, nil
+}
+func (ds *databaseService) GetAccountsAll(ctx context.Context, pageCap int, pageNum int) ([]*models.Account, error) {
+
+	return nil, nil
+}
+func (ds *databaseService) GetAccountByID(ctx context.Context, id string) (*models.Account, error) {
+
+	return nil, nil
+}
+func (ds *databaseService) GetAccountByParams(ctx context.Context, a *models.Account) (*models.Account, error) {
+
+	return nil, nil
+}
+func (ds *databaseService) LoginAccount(ctx context.Context, email string, hPasswd string) (*models.Account, error) {
+
+	return nil, nil
+}
+func (ds *databaseService) EditAccountByID(ctx context.Context, id string) (*models.Account, error) {
+
+	return nil, nil
+}
+func (ds *databaseService) DeleteAccountByID(ctx context.Context, id string) (*models.Account, error) {
+
+	return nil, nil
 }
