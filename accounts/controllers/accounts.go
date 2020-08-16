@@ -31,3 +31,15 @@ func (h *Handler) Init(cfg *config.DBConfig) error {
 
 	return nil
 }
+
+// Close closes all connections of Handler's.
+func (h *Handler) Close() error {
+
+	// close database service
+	err := h.ds.Stop()
+	if err != nil {
+		errors.Wrap(err, "stoping database service")
+	}
+
+	return nil
+}
