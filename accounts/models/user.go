@@ -13,6 +13,9 @@ type Account struct {
 	LastName  string
 	BirthDay  string
 
+	PermanentAddress string
+	MailingAddress   string
+
 	CreatedAt string
 	UpdatedAt string
 	DeletedAt string
