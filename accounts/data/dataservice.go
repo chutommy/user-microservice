@@ -11,16 +11,18 @@ import (
 	"github.com/pkg/errors"
 )
 
-// databaseService is the
-type databaseService struct{ db *sql.DB }
-
-// New is the contructor for the DatabaseService.
-func New() DatabaseService {
-	return &databaseService{}
+// DatabaseService manages all database operations.
+type DatabaseService struct {
+	db *sql.DB
 }
 
-// Init initialize the databaseService connection to the database.
-func (ds *databaseService) Init(cfg *config.DBConfig) error {
+// New is the contructor for the DatabaseService.
+func New() *DatabaseService {
+	return &DatabaseService{}
+}
+
+// Init initialize the DatabaseService connection to the database.
+func (ds *DatabaseService) Init(cfg *config.DBConfig) error {
 
 	// define database connection
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
@@ -54,7 +56,7 @@ func (ds *databaseService) Init(cfg *config.DBConfig) error {
 }
 
 // Stop close the database connection.
-func (ds *databaseService) Stop() error {
+func (ds *DatabaseService) Stop() error {
 
 	// close database connection
 	err := ds.db.Close()
@@ -65,31 +67,31 @@ func (ds *databaseService) Stop() error {
 	return nil
 }
 
-func (ds *databaseService) AddAccount(ctx context.Context, a *models.Account) (*models.Account, error) {
+func (ds *DatabaseService) AddAccount(ctx context.Context, a *models.Account) (*models.Account, error) {
 
 	return nil, nil
 }
-func (ds *databaseService) GetAccountsAll(ctx context.Context, pageCap int, pageNum int) ([]*models.Account, error) {
+func (ds *DatabaseService) GetAccountsAll(ctx context.Context, pageCap int, pageNum int) ([]*models.Account, error) {
 
 	return nil, nil
 }
-func (ds *databaseService) GetAccountByID(ctx context.Context, id string) (*models.Account, error) {
+func (ds *DatabaseService) GetAccountByID(ctx context.Context, id string) (*models.Account, error) {
 
 	return nil, nil
 }
-func (ds *databaseService) GetAccountByParams(ctx context.Context, a *models.Account) (*models.Account, error) {
+func (ds *DatabaseService) GetAccountByParams(ctx context.Context, a *models.Account) (*models.Account, error) {
 
 	return nil, nil
 }
-func (ds *databaseService) LoginAccount(ctx context.Context, email string, hPasswd string) (*models.Account, error) {
+func (ds *DatabaseService) LoginAccount(ctx context.Context, email string, hPasswd string) (*models.Account, error) {
 
 	return nil, nil
 }
-func (ds *databaseService) EditAccountByID(ctx context.Context, id string) (*models.Account, error) {
+func (ds *DatabaseService) EditAccountByID(ctx context.Context, id string) (*models.Account, error) {
 
 	return nil, nil
 }
-func (ds *databaseService) DeleteAccountByID(ctx context.Context, id string) (*models.Account, error) {
+func (ds *DatabaseService) DeleteAccountByID(ctx context.Context, id string) (*models.Account, error) {
 
 	return nil, nil
 }
