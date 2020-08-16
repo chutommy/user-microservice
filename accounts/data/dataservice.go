@@ -50,3 +50,15 @@ func (ds *databaseService) Init(cfg *config.DBConfig) error {
 
 	return nil
 }
+
+// Stop close the database connection.
+func (ds *databaseService) Stop() error {
+
+	// close database connection
+	err := ds.db.Close()
+	if err != nil {
+		return errors.Wrap(err, "stoping database service")
+	}
+
+	return nil
+}
