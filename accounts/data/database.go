@@ -10,17 +10,17 @@ import (
 type Database interface {
 
 	// Create
-	AddAccount(ctx context.Context, u *models.Account)
+	AddAccount(ctx context.Context, a *models.Account) (*models.Account, error)
 
 	// Read
-	GetAccountsAll(ctx context.Context, pageCap int, pageNum int)
-	GetAccountByID(ctx context.Context, id string)
-	GetAccountByParams(ctx context.Context, u *models.Account)
-	LoginAccount(ctx context.Context, email string, hPasswd string)
+	GetAccountsAll(ctx context.Context, pageCap int, pageNum int) ([]*models.Account, error)
+	GetAccountByID(ctx context.Context, id string) (*models.Account, error)
+	GetAccountByParams(ctx context.Context, a *models.Account) (*models.Account, error)
+	LoginAccount(ctx context.Context, email string, hPasswd string) (*models.Account, error)
 
 	// Update
-	EditAccountById(ctx context.Context, id string)
+	EditAccountByID(ctx context.Context, id string) (*models.Account, error)
 
 	// Delete
-	DeleteAccountById(ctx context.Context, id string)
+	DeleteAccountByID(ctx context.Context, id string) (*models.Account, error)
 }
