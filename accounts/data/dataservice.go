@@ -14,8 +14,8 @@ import (
 // databaseService is the
 type databaseService struct{ db *sql.DB }
 
-// New is the contructor for the Database.
-func New() Database {
+// New is the contructor for the DatabaseService.
+func New() DatabaseService {
 	return &databaseService{}
 }
 

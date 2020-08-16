@@ -6,8 +6,8 @@ import (
 	"github.com/chutified/appointments/accounts/models"
 )
 
-// Database is an interface, which is able to make the database actions.
-type Database interface {
+// DatabaseService is an interface, which is able to make the database actions.
+type DatabaseService interface {
 
 	// Create
 	AddAccount(ctx context.Context, a *models.Account) (*models.Account, error)
