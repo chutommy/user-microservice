@@ -12,4 +12,5 @@ type Account struct {
 	BirthDay  string
 	CreatedAt string
 	UpdatedAt string
+	DeletedAt string
 }
