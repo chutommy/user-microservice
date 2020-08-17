@@ -90,7 +90,10 @@ func (ds *DatabaseService) AddAccount(ctx context.Context, a *models.Account) (s
 	birthDay := fmt.Sprintf("%d-%d-%d", y, m, d)
 
 	// run the sql
-	ds.db.QueryRowContext(ctx, sqls, id, a.Username, a.Email, a.Phone, a.HPassword, a.FirstName, a.LastName, birthDay, a.PermanentAddress, a.MailingAddress)
+	_, err := ds.db.ExecContext(ctx, sqls, id, a.Username, a.Email, a.Phone, a.HPassword, a.FirstName, a.LastName, birthDay, a.PermanentAddress, a.MailingAddress)
+	if err != nil {
+		return "", errors.Wrap(err, "inserting a new user")
+	}
 
 	return id, nil
 }
