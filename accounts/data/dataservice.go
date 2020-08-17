@@ -4,10 +4,13 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"io/ioutil"
+	"path/filepath"
 	"time"
 
 	"github.com/chutified/appointments/accounts/config"
 	"github.com/chutified/appointments/accounts/models"
+	"github.com/google/uuid"
 	"github.com/pkg/errors"
 )
 
@@ -67,10 +70,28 @@ func (ds *DatabaseService) Stop() error {
 	return nil
 }
 
-func (ds *DatabaseService) AddAccount(ctx context.Context, a *models.Account) (*models.Account, error) {
+// AddAccount adds a new account into the database and created the generated ID.
+func (ds *DatabaseService) AddAccount(ctx context.Context, a *models.Account) (string, error) {
 
-	return nil, nil
+	// get the sql
+	sqls, err := getQuery("add_account.sql")
+	if err != nil {
+		return "", errors.Wrap(err, "getting the sql")
+	}
+
+	// generate uuid
+	id := uuid.New().String()
+
+	// parse birth day
+	y, m, d := a.BirthDay.Date()
+	birthDay := fmt.Sprintf("%d-%d-%d", y, m, d)
+
+	// run the sql
+	ds.db.QueryRowContext(ctx, sqls, id, a.Username, a.Email, a.Phone, a.HPassword, a.FirstName, a.LastName, birthDay, a.PermanentAddress, a.MailingAddress)
+
+	return id, nil
 }
+
 func (ds *DatabaseService) GetAccountsAll(ctx context.Context, pageCap int, pageNum int) ([]*models.Account, error) {
 
 	return nil, nil
@@ -94,4 +115,19 @@ func (ds *DatabaseService) EditAccountByID(ctx context.Context, id string) (*mod
 func (ds *DatabaseService) DeleteAccountByID(ctx context.Context, id string) (*models.Account, error) {
 
 	return nil, nil
+}
+
+var SQLFileNotFound = errors.New("the sql file was not found")
+
+// getQuery reads the sql from the sql file and returns it in a string form.
+func getQuery(file string) (string, error) {
+
+	// read file
+	path := filepath.Join("queries", file)
+	bs, err := ioutil.ReadFile(path)
+	if err != nil {
+		return "", SQLFileNotFound
+	}
+
+	return string(bs), nil
 }
