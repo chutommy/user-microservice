@@ -70,6 +70,9 @@ func (ds *DatabaseService) Stop() error {
 	return nil
 }
 
+// ErrScanRow is returned when the query returns unexpected result.
+var ErrScanRow = errors.New("unexpected scan's destination")
+
 // AddAccount adds a new account into the database and created the generated ID.
 func (ds *DatabaseService) AddAccount(ctx context.Context, a *models.Account) (string, error) {
 
@@ -90,6 +93,24 @@ func (ds *DatabaseService) AddAccount(ctx context.Context, a *models.Account) (s
 	ds.db.QueryRowContext(ctx, sqls, id, a.Username, a.Email, a.Phone, a.HPassword, a.FirstName, a.LastName, birthDay, a.PermanentAddress, a.MailingAddress)
 
 	return id, nil
+}
+
+func (ds *DatabaseService) AccountsPages(ctx context.Context, pageCap int) (int, error) {
+
+	// get sql
+	sqls, err := getQuery("pages.sql")
+	if err != nil {
+		return 0, errors.Wrap(err, "getting the sql")
+	}
+
+	// run sql
+	var l int
+	err = ds.db.QueryRowContext(ctx, sqls).Scan(&l)
+	if err != nil {
+		return 0, errors.Wrap(err, "query for the number of rows")
+	}
+
+	return l, nil
 }
 
 func (ds *DatabaseService) GetAccountsAll(ctx context.Context, pageCap int, pageNum int) ([]*models.Account, error) {
@@ -117,7 +138,8 @@ func (ds *DatabaseService) DeleteAccountByID(ctx context.Context, id string) (*m
 	return nil, nil
 }
 
-var SQLFileNotFound = errors.New("the sql file was not found")
+// ErrSQLFileNotFound is returned when no sql file is found.
+var ErrSQLFileNotFound = errors.New("the sql file was not found")
 
 // getQuery reads the sql from the sql file and returns it in a string form.
 func getQuery(file string) (string, error) {
@@ -126,7 +148,7 @@ func getQuery(file string) (string, error) {
 	path := filepath.Join("queries", file)
 	bs, err := ioutil.ReadFile(path)
 	if err != nil {
-		return "", SQLFileNotFound
+		return "", ErrSQLFileNotFound
 	}
 
 	return string(bs), nil
