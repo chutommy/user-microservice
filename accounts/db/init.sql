@@ -1,5 +1,15 @@
---  This is script run on the first database initialization.
+--  This scripts run on the database's initialization.
 
+-- create a function which updates the updated_at timestamp
+CREATE OR REPLACE FUNCTION trigger_set_timestamp()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = NOW();
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- create a table
 CREATE TABLE IF NOT EXISTS accounts (
     id          UUID            PRIMARY KEY,
     username    VARCHAR(32)     UNIQUE,
@@ -14,7 +24,13 @@ CREATE TABLE IF NOT EXISTS accounts (
     perm_address VARCHAR(255),
     mail_address VARCHAR(255),
 
-    created_at  TIMESTAMP       NOT NULL,
-    updated_at  TIMESTAMP       NOT NULL,
+    created_at  TIMESTAMP       NOT NULL    DEFAULT NOW(),
+    updated_at  TIMESTAMP       NOT NULL    DEFAULT NOW(),
     deleted_at  TIMESTAMP
 );
+
+-- create a trigger
+CREATE TRIGGER set_timestamp
+BEFORE UPDATE ON accounts
+FOR EACH ROW
+EXECUTE PROCEDURE trigger_set_timestamp();
