@@ -22,6 +22,10 @@ The Account service will be mainly written in Go and SQL - database queries. The
 
 All the configuration can be modified in config.yml file (database connection credentials, server settings - timeouts, exposed ports). Each endpoint will be independently tested with the unit tests.
 
+All collumns are optional, except for the ID, Email, CreatedAt and DeletedAt. ID, Username, Email and Phone must be unique. The ID should have the UUID data type.
+
+The Postgres database will be run in the Docker container and the data should persist inside the db/data directory. When the container is initialized for the first time, the init.sql should run to create a table.
+
 ## API Endpoints
     - `POST /auth` Authenticate the account's email and the hashed password (in request's body).
 
@@ -35,7 +39,7 @@ All the configuration can be modified in config.yml file (database connection cr
 ## Milestones
 Event | Completed
 ----- | ---------
-Database |
+Database | August 17, 2020
 Data service |
 Configuration |
 Controller |
