@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 	"io/ioutil"
+	"math"
 	"path/filepath"
 	"time"
 
@@ -90,7 +91,7 @@ func (ds *DatabaseService) AddAccount(ctx context.Context, a *models.Account) (s
 	birthDay := fmt.Sprintf("%d-%d-%d", y, m, d)
 
 	// run the sql
-	_, err := ds.db.ExecContext(ctx, sqls, id, a.Username, a.Email, a.Phone, a.HPassword, a.FirstName, a.LastName, birthDay, a.PermanentAddress, a.MailingAddress)
+	_, err = ds.db.ExecContext(ctx, sqls, id, a.Username, a.Email, a.Phone, a.HPassword, a.FirstName, a.LastName, birthDay, a.PermanentAddress, a.MailingAddress)
 	if err != nil {
 		return "", errors.Wrap(err, "inserting a new user")
 	}
@@ -98,6 +99,7 @@ func (ds *DatabaseService) AddAccount(ctx context.Context, a *models.Account) (s
 	return id, nil
 }
 
+// AccountsPages return the number of pages with pageCap items on each page.
 func (ds *DatabaseService) AccountsPages(ctx context.Context, pageCap int) (int, error) {
 
 	// get sql
@@ -113,7 +115,11 @@ func (ds *DatabaseService) AccountsPages(ctx context.Context, pageCap int) (int,
 		return 0, errors.Wrap(err, "query for the number of rows")
 	}
 
-	return l, nil
+	// calculate the number of pages
+	p := math.Ceil(float64(l) / float64(pageCap))
+	pages := int(p)
+
+	return pages, nil
 }
 
 func (ds *DatabaseService) GetAccountsAll(ctx context.Context, pageCap int, pageNum int) ([]*models.Account, error) {
