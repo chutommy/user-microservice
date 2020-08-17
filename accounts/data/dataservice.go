@@ -122,7 +122,32 @@ func (ds *DatabaseService) AccountsPages(ctx context.Context, pageCap int) (int,
 	return pages, nil
 }
 
-func (ds *DatabaseService) GetAccountsAll(ctx context.Context, pageCap int, pageNum int) ([]*models.Account, error) {
+func (ds *DatabaseService) GetAccountsAll(ctx context.Context, pageCap int, pageNum int, sortBy string, asc bool) ([]*models.Account, error) {
+
+	// get sql
+	sqls, err := getQuery("get_accounts.sql")
+	if err != nil {
+		return nil, errors.Wrap(err, "getting the sql")
+	}
+
+	// get the pagination
+	offset := pageCap * (pageNum - 1)
+
+	// the the direction
+	var direct string
+	if asc {
+		direct = "ASC"
+	} else {
+		direct = "DESC"
+	}
+
+	// run sql
+	rows, err := ds.db.QueryContext(ctx, sqls, pageCap, offset, sortBy, direct)
+	if err != nil {
+		return nil, errors.Wrap(err, "query error")
+	}
+
+	_ = rows // TODO parse the accounts and return them
 
 	return nil, nil
 }
