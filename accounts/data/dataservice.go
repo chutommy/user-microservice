@@ -74,6 +74,12 @@ func (ds *DatabaseService) Stop() error {
 // ErrScanRow is returned when the query returns unexpected result.
 var ErrScanRow = errors.New("unexpected scan's destination")
 
+// ErrQuery is returned when the query failed to execute p9roperly.
+var ErrQuery = errors.New("query error")
+
+// ErrExecuteSQL is returned when the SQL query failed to execute.
+var ErrExecuteSQL = errors.New("failed to execute query")
+
 // AddAccount adds a new account into the database and created the generated ID.
 func (ds *DatabaseService) AddAccount(ctx context.Context, a *models.Account) (string, error) {
 
@@ -93,7 +99,7 @@ func (ds *DatabaseService) AddAccount(ctx context.Context, a *models.Account) (s
 	// run the sql
 	_, err = ds.db.ExecContext(ctx, sqls, id, a.Username, a.Email, a.Phone, a.HPassword, a.FirstName, a.LastName, birthDay, a.PermanentAddress, a.MailingAddress)
 	if err != nil {
-		return "", errors.Wrap(err, "inserting a new user")
+		return "", errors.Wrap(ErrExecuteSQL, err.Error())
 	}
 
 	return id, nil
@@ -112,7 +118,7 @@ func (ds *DatabaseService) AccountsPages(ctx context.Context, pageCap int) (int,
 	var l int
 	err = ds.db.QueryRowContext(ctx, sqls).Scan(&l)
 	if err != nil {
-		return 0, errors.Wrap(err, "query for the number of rows")
+		return 0, errors.Wrap(ErrQuery, err.Error())
 	}
 
 	// calculate the number of pages
@@ -122,7 +128,8 @@ func (ds *DatabaseService) AccountsPages(ctx context.Context, pageCap int) (int,
 	return pages, nil
 }
 
-func (ds *DatabaseService) GetAccountsAll(ctx context.Context, pageCap int, pageNum int, sortBy string, asc bool) ([]*models.Account, error) {
+// GetAllAccounts return all accounts in the detabase, except for deleted one.
+func (ds *DatabaseService) GetAllAccounts(ctx context.Context, pageCap int, pageNum int, sortBy string, asc bool) ([]*models.Account, error) {
 
 	// get sql
 	sqls, err := getQuery("get_accounts.sql")
@@ -144,12 +151,27 @@ func (ds *DatabaseService) GetAccountsAll(ctx context.Context, pageCap int, page
 	// run sql
 	rows, err := ds.db.QueryContext(ctx, sqls, pageCap, offset, sortBy, direct)
 	if err != nil {
-		return nil, errors.Wrap(err, "query error")
+		return nil, errors.Wrap(ErrQuery, err.Error())
 	}
 
-	_ = rows // TODO parse the accounts and return them
+	// prepare the array
+	accounts := []*models.Account{}
+	// range over rows
+	for rows.Next() {
 
-	return nil, nil
+		// init th =e model
+		var a *models.Account
+
+		// scan the values into the model
+		err := rows.Scan(&a.ID, &a.Username, &a.Email, &a.Phone, &a.HPassword, &a.FirstName, &a.LastName, &a.BirthDay, &a.PermanentAddress, &a.MailingAddress, &a.CreatedAt, &a.UpdatedAt)
+		if err != nil {
+			return nil, errors.Wrap(ErrScanRow, err.Error())
+		}
+
+		accounts = append(accounts, a)
+	}
+
+	return accounts, nil
 }
 func (ds *DatabaseService) GetAccountByID(ctx context.Context, id string) (*models.Account, error) {
 
