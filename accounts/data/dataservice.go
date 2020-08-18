@@ -173,10 +173,26 @@ func (ds *DatabaseService) GetAllAccounts(ctx context.Context, pageCap int, page
 
 	return accounts, nil
 }
+
+// GetAccountByID returns an account with the given ID, returns nil if the account with the ID is not find or deleted.
 func (ds *DatabaseService) GetAccountByID(ctx context.Context, id string) (*models.Account, error) {
 
-	return nil, nil
+	// get sql
+	sqls, err := getQuery("get_by_id.sql")
+	if err != nil {
+		return nil, errors.Wrap(err, "getting the sql")
+	}
+
+	var a *models.Account
+	// run sql and scan
+	err = ds.db.QueryRowContext(ctx, sqls, id).Scan(&a.ID, &a.Username, &a.Email, &a.Phone, &a.HPassword, &a.FirstName, &a.LastName, &a.BirthDay, &a.PermanentAddress, &a.MailingAddress, &a.CreatedAt, &a.UpdatedAt)
+	if err != nil {
+		return nil, errors.Wrap(ErrQuery, err.Error())
+	}
+
+	return a, nil
 }
+
 func (ds *DatabaseService) GetAccountByParams(ctx context.Context, a *models.Account) (*models.Account, error) {
 
 	return nil, nil
