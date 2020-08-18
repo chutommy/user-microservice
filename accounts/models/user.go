@@ -1,7 +1,5 @@
 package models
 
-import "time"
-
 // Account defines all stored variables for an account
 type Account struct {
 	ID        string
@@ -13,7 +11,7 @@ type Account struct {
 
 	FirstName string
 	LastName  string
-	BirthDay  time.Time
+	BirthDay  string
 
 	PermanentAddress string
 	MailingAddress   string
