@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS accounts (
 
     created_at  TIMESTAMP       NOT NULL    DEFAULT NOW(),
     updated_at  TIMESTAMP       NOT NULL    DEFAULT NOW(),
-    deleted_at  TIMESTAMP
+    deleted_at  TIMESTAMP       DEFAULT NULL
 );
 
 -- create a trigger
