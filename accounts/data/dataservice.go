@@ -92,12 +92,8 @@ func (ds *DatabaseService) AddAccount(ctx context.Context, a *models.Account) (s
 	// generate uuid
 	id := uuid.New().String()
 
-	// parse birth day
-	y, m, d := a.BirthDay.Date()
-	birthDay := fmt.Sprintf("%d-%d-%d", y, m, d)
-
 	// run the sql
-	_, err = ds.db.ExecContext(ctx, sqls, id, a.Username, a.Email, a.Phone, a.HPassword, a.FirstName, a.LastName, birthDay, a.PermanentAddress, a.MailingAddress)
+	_, err = ds.db.ExecContext(ctx, sqls, id, a.Username, a.Email, a.Phone, a.HPassword, a.FirstName, a.LastName, a.BirthDay, a.PermanentAddress, a.MailingAddress)
 	if err != nil {
 		return "", errors.Wrap(ErrExecuteSQL, err.Error())
 	}
@@ -117,7 +113,9 @@ func (ds *DatabaseService) AccountsPages(ctx context.Context, pageCap int) (int,
 	// run sql
 	var l int
 	err = ds.db.QueryRowContext(ctx, sqls).Scan(&l)
-	if err != nil {
+	if err == sql.ErrNoRows {
+		return 0, err
+	} else if err != nil {
 		return 0, errors.Wrap(ErrQuery, err.Error())
 	}
 
@@ -150,7 +148,9 @@ func (ds *DatabaseService) GetAllAccounts(ctx context.Context, pageCap int, page
 
 	// run sql
 	rows, err := ds.db.QueryContext(ctx, sqls, pageCap, offset, sortBy, direct)
-	if err != nil {
+	if err == sql.ErrNoRows {
+		return nil, err
+	} else if err != nil {
 		return nil, errors.Wrap(ErrQuery, err.Error())
 	}
 
@@ -163,7 +163,7 @@ func (ds *DatabaseService) GetAllAccounts(ctx context.Context, pageCap int, page
 		var a *models.Account
 
 		// scan the values into the model
-		err := rows.Scan(&a.ID, &a.Username, &a.Email, &a.Phone, &a.HPassword, &a.FirstName, &a.LastName, &a.BirthDay, &a.PermanentAddress, &a.MailingAddress, &a.CreatedAt, &a.UpdatedAt)
+		err := rows.Scan(&a.ID, &a.Username, &a.Email, &a.Phone, &a.FirstName, &a.LastName, &a.BirthDay, &a.PermanentAddress, &a.MailingAddress, &a.CreatedAt, &a.UpdatedAt)
 		if err != nil {
 			return nil, errors.Wrap(ErrScanRow, err.Error())
 		}
@@ -185,8 +185,10 @@ func (ds *DatabaseService) GetAccountByID(ctx context.Context, id string) (*mode
 
 	var a *models.Account
 	// run sql and scan
-	err = ds.db.QueryRowContext(ctx, sqls, id).Scan(&a.ID, &a.Username, &a.Email, &a.Phone, &a.HPassword, &a.FirstName, &a.LastName, &a.BirthDay, &a.PermanentAddress, &a.MailingAddress, &a.CreatedAt, &a.UpdatedAt)
-	if err != nil {
+	err = ds.db.QueryRowContext(ctx, sqls, id).Scan(&a.ID, &a.Username, &a.Email, &a.Phone, &a.FirstName, &a.LastName, &a.BirthDay, &a.PermanentAddress, &a.MailingAddress, &a.CreatedAt, &a.UpdatedAt)
+	if err == sql.ErrNoRows {
+		return nil, err
+	} else if err != nil {
 		return nil, errors.Wrap(ErrQuery, err.Error())
 	}
 
@@ -195,7 +197,21 @@ func (ds *DatabaseService) GetAccountByID(ctx context.Context, id string) (*mode
 
 func (ds *DatabaseService) GetAccountByParams(ctx context.Context, a *models.Account) (*models.Account, error) {
 
-	return nil, nil
+	// get sql
+	sqls, err := getQuery("get_by_params.sql")
+	if err != nil {
+		return nil, errors.Wrap(err, "getting the sql")
+	}
+
+	// run sql and scan
+	row = ds.db.QueryRowContext(ctx, sqls, a.ID, a.Username, a.Email, a.Phone, a.FirstName, a.LastName, a.BirthDay, a.PermanentAddress, a.MailingAddress, a.CreatedAt, a.UpdatedAt)
+	if err == sql.ErrNoRows {
+		return nil, err
+	} else if err != nil {
+		return nil, errors.Wrap(ErrQuery, err.Error())
+	}
+
+	return a, nil
 }
 func (ds *DatabaseService) LoginAccount(ctx context.Context, email string, hPasswd string) (*models.Account, error) {
 
