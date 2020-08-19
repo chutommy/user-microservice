@@ -15,6 +15,18 @@ import (
 	"github.com/pkg/errors"
 )
 
+// ErrSQLFileNotFound is returned when no sql file is found.
+var ErrSQLFileNotFound = errors.New("the sql file was not found")
+
+// ErrScanRow is returned when the query returns unexpected result.
+var ErrScanRow = errors.New("unexpected scan's destination")
+
+// ErrQuery is returned when the query failed to execute p9roperly.
+var ErrQuery = errors.New("query error")
+
+// ErrExecuteSQL is returned when the SQL query failed to execute.
+var ErrExecuteSQL = errors.New("failed to execute query")
+
 // DatabaseService manages all database operations.
 type DatabaseService struct {
 	db *sql.DB
@@ -70,15 +82,6 @@ func (ds *DatabaseService) Stop() error {
 
 	return nil
 }
-
-// ErrScanRow is returned when the query returns unexpected result.
-var ErrScanRow = errors.New("unexpected scan's destination")
-
-// ErrQuery is returned when the query failed to execute p9roperly.
-var ErrQuery = errors.New("query error")
-
-// ErrExecuteSQL is returned when the SQL query failed to execute.
-var ErrExecuteSQL = errors.New("failed to execute query")
 
 // AddAccount adds a new account into the database and created the generated ID.
 func (ds *DatabaseService) AddAccount(ctx context.Context, a *models.Account) (string, error) {
@@ -256,9 +259,6 @@ func (ds *DatabaseService) DeleteAccountByID(ctx context.Context, id string) (*m
 
 	return nil, nil
 }
-
-// ErrSQLFileNotFound is returned when no sql file is found.
-var ErrSQLFileNotFound = errors.New("the sql file was not found")
 
 // getQuery reads the sql from the sql file and returns it in a string form.
 func getQuery(file string) (string, error) {
