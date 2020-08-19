@@ -1,3 +1,3 @@
 SELECT COUNT(*)
 FROM accounts
-WHERE deleted_at == NULL;
+WHERE deleted_at = NULL;
