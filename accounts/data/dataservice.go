@@ -195,6 +195,7 @@ func (ds *DatabaseService) GetAccountByID(ctx context.Context, id string) (*mode
 	return a, nil
 }
 
+// GetAccountByParams returns the account queried by non-nil parameters.
 func (ds *DatabaseService) GetAccountByParams(ctx context.Context, a *models.Account) (*models.Account, error) {
 
 	// get sql
@@ -203,15 +204,22 @@ func (ds *DatabaseService) GetAccountByParams(ctx context.Context, a *models.Acc
 		return nil, errors.Wrap(err, "getting the sql")
 	}
 
-	// run sql and scan
-	row = ds.db.QueryRowContext(ctx, sqls, a.ID, a.Username, a.Email, a.Phone, a.FirstName, a.LastName, a.BirthDay, a.PermanentAddress, a.MailingAddress, a.CreatedAt, a.UpdatedAt)
+	// run sql
+	row := ds.db.QueryRowContext(ctx, sqls, a.ID, a.Username, a.Email, a.Phone, a.FirstName, a.LastName, a.BirthDay, a.PermanentAddress, a.MailingAddress, a.CreatedAt, a.UpdatedAt)
 	if err == sql.ErrNoRows {
 		return nil, err
 	} else if err != nil {
 		return nil, errors.Wrap(ErrQuery, err.Error())
 	}
 
-	return a, nil
+	// TODO parse the row
+	var result *models.Account
+	err = row.Scan(&result.ID, &result.Username, &result.Email, &result.Phone, &result.FirstName, &result.LastName, &result.BirthDay, &result.PermanentAddress, &result.MailingAddress, &result.CreatedAt, &result.UpdatedAt)
+	if err != nil {
+		return nil, errors.Wrap(ErrScanRow, err.Error())
+	}
+
+	return result, nil
 }
 func (ds *DatabaseService) LoginAccount(ctx context.Context, email string, hPasswd string) (*models.Account, error) {
 
