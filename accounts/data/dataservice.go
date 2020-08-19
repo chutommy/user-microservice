@@ -255,9 +255,21 @@ func (ds *DatabaseService) EditAccountByID(ctx context.Context, id string) (*mod
 
 	return nil, nil
 }
-func (ds *DatabaseService) DeleteAccountByID(ctx context.Context, id string) (*models.Account, error) {
+func (ds *DatabaseService) DeleteAccountByID(ctx context.Context, id string) error {
 
-	return nil, nil
+	// get sql
+	sqls, err := getQuery("delete.sql")
+	if err != nil {
+		return errors.Wrap(err, "getting the sql")
+	}
+
+	// run sql
+	_, err = ds.db.ExecContext(ctx, sqls, id)
+	if err != nil {
+		return errors.Wrap(ErrExecuteSQL, err.Error())
+	}
+
+	return nil
 }
 
 // getQuery reads the sql from the sql file and returns it in a string form.
