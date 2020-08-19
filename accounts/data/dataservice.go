@@ -212,7 +212,7 @@ func (ds *DatabaseService) GetAccountByParams(ctx context.Context, a *models.Acc
 		return nil, errors.Wrap(ErrQuery, err.Error())
 	}
 
-	// TODO parse the row
+	// parse the row
 	var result *models.Account
 	err = row.Scan(&result.ID, &result.Username, &result.Email, &result.Phone, &result.FirstName, &result.LastName, &result.BirthDay, &result.PermanentAddress, &result.MailingAddress, &result.CreatedAt, &result.UpdatedAt)
 	if err != nil {
@@ -221,10 +221,20 @@ func (ds *DatabaseService) GetAccountByParams(ctx context.Context, a *models.Acc
 
 	return result, nil
 }
-func (ds *DatabaseService) LoginAccount(ctx context.Context, email string, hPasswd string) (*models.Account, error) {
+
+// ValidatePassword compares the given hashed password with the password of the the account.
+// The account is returned if the passwords are same.
+func (ds *DatabaseService) ValidatePassword(ctx context.Context, id string, hPasswd string) (*models.Account, error) {
+
+	// get sql
+	sqls, err := getQuery("validate.sql")
+	if err != nil {
+		return
+	}
 
 	return nil, nil
 }
+
 func (ds *DatabaseService) EditAccountByID(ctx context.Context, id string) (*models.Account, error) {
 
 	return nil, nil
