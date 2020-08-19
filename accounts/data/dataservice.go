@@ -196,6 +196,7 @@ func (ds *DatabaseService) GetAccountByID(ctx context.Context, id string) (*mode
 }
 
 // GetAccountByParams returns the account queried by non-nil parameters.
+// TODO: handles multiple accounts for return
 func (ds *DatabaseService) GetAccountByParams(ctx context.Context, a *models.Account) (*models.Account, error) {
 
 	// get sql
@@ -223,16 +224,28 @@ func (ds *DatabaseService) GetAccountByParams(ctx context.Context, a *models.Acc
 }
 
 // ValidatePassword compares the given hashed password with the password of the the account.
-// The account is returned if the passwords are same.
-func (ds *DatabaseService) ValidatePassword(ctx context.Context, id string, hPasswd string) (*models.Account, error) {
+// The True is returned if the passwords are same.
+func (ds *DatabaseService) ValidatePassword(ctx context.Context, id string, hPasswd string) (bool, error) {
 
 	// get sql
 	sqls, err := getQuery("validate.sql")
 	if err != nil {
-		return
+		return false, errors.Wrap(err, "getting the sql")
 	}
 
-	return nil, nil
+	var dbPasswd string
+	// run sql
+	err = ds.db.QueryRowContext(ctx, sqls, id).Scan(&dbPasswd)
+	if err == sql.ErrNoRows {
+		return false, err
+	} else if err != nil {
+		return false, errors.Wrap(ErrQuery, err.Error())
+	}
+
+	// compare
+	ok := dbPasswd == hPasswd
+
+	return ok, nil
 }
 
 func (ds *DatabaseService) EditAccountByID(ctx context.Context, id string) (*models.Account, error) {
