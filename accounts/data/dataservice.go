@@ -251,10 +251,26 @@ func (ds *DatabaseService) ValidatePassword(ctx context.Context, id string, hPas
 	return ok, nil
 }
 
-func (ds *DatabaseService) EditAccountByID(ctx context.Context, id string) (*models.Account, error) {
+// EditAccountByID edits the account with the corresponding ID.
+// Editing model must have
+func (ds *DatabaseService) EditAccountByID(ctx context.Context, a *models.Account) error {
 
-	return nil, nil
+	// get sql
+	sqls, err := getQuery("update.sql")
+	if err != nil {
+		return errors.Wrap(err, "getting the sql")
+	}
+
+	// run sql
+	_, err = ds.db.ExecContext(ctx, sqls, a.ID, a.Username, a.Email, a.Phone, a.HPassword, a.FirstName, a.LastName, a.BirthDay, a.PermanentAddress, a.MailingAddress)
+	if err != nil {
+		return errors.Wrap(ErrExecuteSQL, err.Error())
+	}
+
+	return nil
 }
+
+// DeleteAccountByID removes the account with the given ID from the database.
 func (ds *DatabaseService) DeleteAccountByID(ctx context.Context, id string) error {
 
 	// get sql
