@@ -1,2 +1,2 @@
-DELETE FROM accounts
-WHERE id = $1 AND deleted_at = NULL;
+delete from accounts
+where id = $1 and deleted_at = null;
