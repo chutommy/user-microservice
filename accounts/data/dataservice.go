@@ -234,7 +234,7 @@ func (ds *DatabaseService) GetAccountByID(ctx context.Context, id string) (*mode
 
 // GetAccountByParams returns the account queried by non-nil parameters.
 // TODO: handles multiple accounts for return
-func (ds *DatabaseService) GetAccountByParams(ctx context.Context, a *models.Account) (*models.Account, error) {
+func (ds *DatabaseService) GetAccountByParams(ctx context.Context, a *models.Account) ([]*models.Account, error) {
 
 	// get sql
 	sqls, err := getQuery("get_by_params.sql")
@@ -243,7 +243,7 @@ func (ds *DatabaseService) GetAccountByParams(ctx context.Context, a *models.Acc
 	}
 
 	// run sql
-	row := ds.db.QueryRowContext(ctx, sqls,
+	rows, err := ds.db.QueryContext(ctx, sqls,
 		a.ID,
 		a.Username,
 		a.Email,
@@ -262,26 +262,34 @@ func (ds *DatabaseService) GetAccountByParams(ctx context.Context, a *models.Acc
 		return nil, errors.Wrap(ErrQuery, err.Error())
 	}
 
-	// parse the row
-	var result *models.Account
-	err = row.Scan(
-		&result.ID,
-		&result.Username,
-		&result.Email,
-		&result.Phone,
-		&result.FirstName,
-		&result.LastName,
-		&result.BirthDay,
-		&result.PermanentAddress,
-		&result.MailingAddress,
-		&result.CreatedAt,
-		&result.UpdatedAt,
-	)
-	if err != nil {
-		return nil, errors.Wrap(ErrScanRow, err.Error())
+	// parse rows
+	var results []*models.Account
+	for rows.Next() {
+
+		// scan row
+		var record *models.Account
+		err = rows.Scan(
+			&record.ID,
+			&record.Username,
+			&record.Email,
+			&record.Phone,
+			&record.FirstName,
+			&record.LastName,
+			&record.BirthDay,
+			&record.PermanentAddress,
+			&record.MailingAddress,
+			&record.CreatedAt,
+			&record.UpdatedAt,
+		)
+		if err != nil {
+			return nil, errors.Wrap(ErrScanRow, err.Error())
+		}
+
+		// append record
+		results = append(results, record)
 	}
 
-	return result, nil
+	return results, nil
 }
 
 // ValidatePassword compares the given hashed password with the password of the the account.

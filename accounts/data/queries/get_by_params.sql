@@ -11,5 +11,4 @@ and ($7 = "" or $7 = birth_day)
 and ($8 = "" or $8 = perm_address)
 and ($9 = "" or $9 = mail_address)
 and ($10 = "" or $10 = created_at)
-and ($11 = "" or $11 = updated_at)
-limit 1;
+and ($11 = "" or $11 = updated_at);
