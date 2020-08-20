@@ -40,7 +40,7 @@ The Postgres database will be run in the Docker container and the data should pe
 Event | Completed
 ----- | ---------
 Database | August 17, 2020
-Data service |
+Data service | August 20, 2020
 Configuration |
 Controller |
 Server |
