@@ -1,36 +1,36 @@
---  This scripts run on the database's initialization.
+--  this script run on the database's initialization.
 
 -- create a function which updates the updated_at timestamp
-CREATE OR REPLACE FUNCTION trigger_set_timestamp()
-RETURNS TRIGGER AS $$
-BEGIN
-  NEW.updated_at = NOW();
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
+create or replace function trigger_set_timestamp()
+returns trigger as $$
+begin
+  new.updated_at = now();
+  return new;
+end;
+$$ language plpgsql;
 
 -- create a table
-CREATE TABLE IF NOT EXISTS accounts (
-    id          UUID            PRIMARY KEY,
-    username    VARCHAR(32)     UNIQUE,
-    email       VARCHAR(255)    UNIQUE NOT NULL,
-    phone       VARCHAR(33)     UNIQUE,
-    hpassword   VARCHAR(128)    NOT NULL,
+create table if not exists accounts (
+    id          uuid            primary key,
+    username    varchar(32)     unique,
+    email       varchar(255)    unique not null,
+    phone       varchar(33)     unique,
+    hpassword   varchar(128)    not null,
 
-    first_name  VARCHAR(64),
-    last_name   VARCHAR(64),
-    birth_day   DATE,
+    first_name  varchar(64),
+    last_name   varchar(64),
+    birth_day   date,
 
-    perm_address VARCHAR(255),
-    mail_address VARCHAR(255),
+    perm_address varchar(255),
+    mail_address varchar(255),
 
-    created_at  TIMESTAMP       NOT NULL    DEFAULT NOW(),
-    updated_at  TIMESTAMP       NOT NULL    DEFAULT NOW(),
-    deleted_at  TIMESTAMP       DEFAULT NULL
+    created_at  timestamp       not null    default now(),
+    updated_at  timestamp       not null    default now(),
+    deleted_at  timestamp       default null
 );
 
 -- create a trigger
-CREATE TRIGGER set_timestamp
-BEFORE UPDATE ON accounts
-FOR EACH ROW
-EXECUTE PROCEDURE trigger_set_timestamp();
+create trigger set_timestamp
+before update on accounts
+for each row
+execute procedure trigger_set_timestamp();
