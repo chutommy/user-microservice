@@ -96,7 +96,17 @@ func (ds *DatabaseService) AddAccount(ctx context.Context, a *models.Account) (s
 	id := uuid.New().String()
 
 	// run the sql
-	_, err = ds.db.ExecContext(ctx, sqls, id, a.Username, a.Email, a.Phone, a.HPassword, a.FirstName, a.LastName, a.BirthDay, a.PermanentAddress, a.MailingAddress)
+	_, err = ds.db.ExecContext(ctx, sqls, id,
+		a.Username,
+		a.Email,
+		a.Phone,
+		a.HPassword,
+		a.FirstName,
+		a.LastName,
+		a.BirthDay,
+		a.PermanentAddress,
+		a.MailingAddress,
+	)
 	if err != nil {
 		return "", errors.Wrap(ErrExecuteSQL, err.Error())
 	}
@@ -166,7 +176,19 @@ func (ds *DatabaseService) GetAllAccounts(ctx context.Context, pageCap int, page
 		var a *models.Account
 
 		// scan the values into the model
-		err := rows.Scan(&a.ID, &a.Username, &a.Email, &a.Phone, &a.FirstName, &a.LastName, &a.BirthDay, &a.PermanentAddress, &a.MailingAddress, &a.CreatedAt, &a.UpdatedAt)
+		err := rows.Scan(
+			&a.ID,
+			&a.Username,
+			&a.Email,
+			&a.Phone,
+			&a.FirstName,
+			&a.LastName,
+			&a.BirthDay,
+			&a.PermanentAddress,
+			&a.MailingAddress,
+			&a.CreatedAt,
+			&a.UpdatedAt,
+		)
 		if err != nil {
 			return nil, errors.Wrap(ErrScanRow, err.Error())
 		}
@@ -188,7 +210,19 @@ func (ds *DatabaseService) GetAccountByID(ctx context.Context, id string) (*mode
 
 	var a *models.Account
 	// run sql and scan
-	err = ds.db.QueryRowContext(ctx, sqls, id).Scan(&a.ID, &a.Username, &a.Email, &a.Phone, &a.FirstName, &a.LastName, &a.BirthDay, &a.PermanentAddress, &a.MailingAddress, &a.CreatedAt, &a.UpdatedAt)
+	err = ds.db.QueryRowContext(ctx, sqls, id).Scan(
+		&a.ID,
+		&a.Username,
+		&a.Email,
+		&a.Phone,
+		&a.FirstName,
+		&a.LastName,
+		&a.BirthDay,
+		&a.PermanentAddress,
+		&a.MailingAddress,
+		&a.CreatedAt,
+		&a.UpdatedAt,
+	)
 	if err == sql.ErrNoRows {
 		return nil, err
 	} else if err != nil {
@@ -209,7 +243,19 @@ func (ds *DatabaseService) GetAccountByParams(ctx context.Context, a *models.Acc
 	}
 
 	// run sql
-	row := ds.db.QueryRowContext(ctx, sqls, a.ID, a.Username, a.Email, a.Phone, a.FirstName, a.LastName, a.BirthDay, a.PermanentAddress, a.MailingAddress, a.CreatedAt, a.UpdatedAt)
+	row := ds.db.QueryRowContext(ctx, sqls,
+		a.ID,
+		a.Username,
+		a.Email,
+		a.Phone,
+		a.FirstName,
+		a.LastName,
+		a.BirthDay,
+		a.PermanentAddress,
+		a.MailingAddress,
+		a.CreatedAt,
+		a.UpdatedAt,
+	)
 	if err == sql.ErrNoRows {
 		return nil, err
 	} else if err != nil {
@@ -218,7 +264,19 @@ func (ds *DatabaseService) GetAccountByParams(ctx context.Context, a *models.Acc
 
 	// parse the row
 	var result *models.Account
-	err = row.Scan(&result.ID, &result.Username, &result.Email, &result.Phone, &result.FirstName, &result.LastName, &result.BirthDay, &result.PermanentAddress, &result.MailingAddress, &result.CreatedAt, &result.UpdatedAt)
+	err = row.Scan(
+		&result.ID,
+		&result.Username,
+		&result.Email,
+		&result.Phone,
+		&result.FirstName,
+		&result.LastName,
+		&result.BirthDay,
+		&result.PermanentAddress,
+		&result.MailingAddress,
+		&result.CreatedAt,
+		&result.UpdatedAt,
+	)
 	if err != nil {
 		return nil, errors.Wrap(ErrScanRow, err.Error())
 	}
@@ -262,7 +320,18 @@ func (ds *DatabaseService) EditAccountByID(ctx context.Context, a *models.Accoun
 	}
 
 	// run sql
-	_, err = ds.db.ExecContext(ctx, sqls, a.ID, a.Username, a.Email, a.Phone, a.HPassword, a.FirstName, a.LastName, a.BirthDay, a.PermanentAddress, a.MailingAddress)
+	_, err = ds.db.ExecContext(ctx, sqls,
+		a.ID,
+		a.Username,
+		a.Email,
+		a.Phone,
+		a.HPassword,
+		a.FirstName,
+		a.LastName,
+		a.BirthDay,
+		a.PermanentAddress,
+		a.MailingAddress,
+	)
 	if err != nil {
 		return errors.Wrap(ErrExecuteSQL, err.Error())
 	}
