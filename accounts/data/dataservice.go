@@ -27,6 +27,12 @@ var ErrQuery = errors.New("query error")
 // ErrExecuteSQL is returned when the SQL query failed to execute.
 var ErrExecuteSQL = errors.New("failed to execute query")
 
+// ErrInvalidPageCap is returned if the invalid page cap is used as function argument.
+var ErrInvalidPageCap = errors.New("page cap must be a positive integer")
+
+// ErrInvalidID is returned when the invalid ID is encountered.
+var ErrInvalidID = errors.New("invalid id")
+
 // DatabaseService manages all database operations.
 type DatabaseService struct {
 	db *sql.DB
@@ -117,6 +123,11 @@ func (ds *DatabaseService) AddAccount(ctx context.Context, a *models.Account) (s
 // AccountsPages return the number of pages with pageCap items on each page.
 func (ds *DatabaseService) AccountsPages(ctx context.Context, pageCap int) (int, error) {
 
+	// validate pageCap
+	if pageCap < 1 {
+		return 0, ErrInvalidPageCap
+	}
+
 	// get sql
 	sqls, err := getQuery("pages.sql")
 	if err != nil {
@@ -142,6 +153,19 @@ func (ds *DatabaseService) AccountsPages(ctx context.Context, pageCap int) (int,
 // GetAllAccounts return all accounts in the detabase, except for deleted one.
 func (ds *DatabaseService) GetAllAccounts(ctx context.Context, pageCap int, pageNum int, sortBy string, asc bool) ([]*models.Account, error) {
 
+	// validate inputs
+	if pageCap < 1 {
+		return nil, ErrInvalidPageCap
+	}
+	if pageNum < 0 {
+		return nil, errors.New("page number must be non-negative integer")
+	}
+	switch sortBy {
+	case "id", "username", "email", "phone", "hpassword", "first_name", "last_name", "birth_day", "perm_address", "mail_address", "created_at", "updated_at":
+	default:
+		return nil, errors.New("invalid 'sort by' argument")
+	}
+
 	// get sql
 	sqls, err := getQuery("get_accounts.sql")
 	if err != nil {
@@ -149,7 +173,7 @@ func (ds *DatabaseService) GetAllAccounts(ctx context.Context, pageCap int, page
 	}
 
 	// get the pagination
-	offset := pageCap * (pageNum - 1)
+	offset := pageCap * pageNum
 
 	// the the direction
 	var direct string
@@ -201,6 +225,11 @@ func (ds *DatabaseService) GetAllAccounts(ctx context.Context, pageCap int, page
 
 // GetAccountByID returns an account with the given ID, returns nil if the account with the ID is not find or deleted.
 func (ds *DatabaseService) GetAccountByID(ctx context.Context, id string) (*models.Account, error) {
+
+	// validate id
+	if _, err := uuid.FromBytes([]byte(id)); err != nil {
+		return nil, ErrInvalidID
+	}
 
 	// get sql
 	sqls, err := getQuery("get_by_id.sql")
@@ -296,6 +325,11 @@ func (ds *DatabaseService) GetAccountByParams(ctx context.Context, a *models.Acc
 // The True is returned if the passwords are same.
 func (ds *DatabaseService) ValidatePassword(ctx context.Context, id string, hPasswd string) (bool, error) {
 
+	// validate id
+	if _, err := uuid.FromBytes([]byte(id)); err != nil {
+		return false, ErrInvalidID
+	}
+
 	// get sql
 	sqls, err := getQuery("validate.sql")
 	if err != nil {
@@ -349,6 +383,11 @@ func (ds *DatabaseService) EditAccountByID(ctx context.Context, a *models.Accoun
 
 // DeleteAccountByID removes the account with the given ID from the database.
 func (ds *DatabaseService) DeleteAccountByID(ctx context.Context, id string) error {
+
+	// validate id
+	if _, err := uuid.FromBytes([]byte(id)); err != nil {
+		return ErrInvalidID
+	}
 
 	// get sql
 	sqls, err := getQuery("delete.sql")
