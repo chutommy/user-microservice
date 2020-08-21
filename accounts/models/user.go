@@ -2,21 +2,21 @@ package models
 
 // Account defines all stored variables for an account
 type Account struct {
-	ID        string
-	Username  string
-	HPassword string
+	ID        string `json:"id,omitempty"`
+	Username  string `json:"username,omitempty"`
+	HPassword string `json:"hashed_password,omitempty"`
 
-	Email string
-	Phone string
+	Email string `json:"email,omitempty"`
+	Phone string `json:"phone,omitempty"`
 
-	FirstName string
-	LastName  string
-	BirthDay  string
+	FirstName string `json:"first_name,omitempty"`
+	LastName  string `json:"last_name,omitempty"`
+	BirthDay  string `json:"birth_day,omitempty"`
 
-	PermanentAddress string
-	MailingAddress   string
+	PermanentAddress string `json:"permanent_address,omitempty"`
+	MailingAddress   string `json:"mailing_address,omitempty"`
 
-	CreatedAt string
-	UpdatedAt string
-	DeletedAt string
+	CreatedAt string `json:"created_at,omitempty"`
+	UpdatedAt string `json:"updated_at,omitempty"`
+	DeletedAt string `json:"deleted_at,omitempty"`
 }
