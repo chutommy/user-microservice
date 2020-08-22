@@ -95,8 +95,23 @@ func (h *Handler) GetAccountsAll(c *gin.Context) {
 	c.JSON(200, accs)
 }
 
+// GetAccountByID handles the request and return the account with the given ID.
 func (h *Handler) GetAccountByID(c *gin.Context) {
+
+	// get param values
+	id := c.Param("id")
+
+	a, err := h.ds.GetAccountByID(c, id)
+	if err != nil {
+		c.JSON(400, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(200, a)
 }
+
 func (h *Handler) GetAccountByParams(c *gin.Context) {
 }
 func (h *Handler) LoginAccount(c *gin.Context) {
