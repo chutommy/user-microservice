@@ -72,14 +72,6 @@ func (h *Handler) GetAccountsAll(c *gin.Context) {
 	}
 
 	sort := c.DefaultQuery("sort", "id")
-	switch sort {
-	case "id", "username", "email", "phone", "hpassword", "first_name", "last_name", "birth_day", "perm_address", "mail_address", "created_at", "updated_at":
-	default:
-		c.JSON(400, gin.H{
-			"errors": "invalid sort by query value",
-		})
-		return
-	}
 
 	asc := c.DefaultQuery("asc", "true") == "true"
 
