@@ -160,11 +160,33 @@ func (h *Handler) LoginAccount(c *gin.Context) {
 	}
 
 	c.JSON(200, gin.H{
-		"message": "successfully loged in",
+		"message": "successfully loged in ( " + login.ID + " )",
 	})
 }
 
+// EditAccountByID handle the account's update.
 func (h *Handler) EditAccountByID(c *gin.Context) {
-}
-func (h *Handler) DeleteAccountByID(c *gin.Context) {
+
+	// get the request body
+	var a models.Account
+	err := c.BindJSON(&a)
+	if err != nil {
+		c.JSON(400, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	// udpate the database
+	err = h.ds.EditAccountByID(c, &a)
+	if err != nil {
+		c.JSON(400, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"message": "success (" + a.ID + ")",
+	})
 }
