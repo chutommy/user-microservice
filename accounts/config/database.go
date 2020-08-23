@@ -1,6 +1,6 @@
 package config
 
-// DBConfig hold the credentials for the database connection.
+// DBConfig holds the credentials for the database connection.
 type DBConfig struct {
 	Host     string `yaml:"Host"`
 	Port     int    `yaml:"Port"`
