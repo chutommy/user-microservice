@@ -20,3 +20,9 @@ type Account struct {
 	UpdatedAt string `json:"updated_at,omitempty"`
 	DeletedAt string `json:"deleted_at,omitempty"`
 }
+
+// Login is the model of the Login/Validate request.
+type Login struct {
+	ID        string `json:"id,omitempty"`
+	HPassword string `json:"hashed_password,omitempty"`
+}
