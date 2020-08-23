@@ -104,8 +104,31 @@ func (h *Handler) GetAccountByID(c *gin.Context) {
 	c.JSON(200, a)
 }
 
+// GetAccountByParams handles the request for all accounts that satisfy given parameters
 func (h *Handler) GetAccountByParams(c *gin.Context) {
+
+	// get the parameters
+	var a models.Account
+	err := c.BindJSON(&a)
+	if err != nil {
+		c.JSON(400, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	// query the accounts
+	accs, err := h.ds.GetAccountByParams(c, &a)
+	if err != nil {
+		c.JSON(400, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(200, accs)
 }
+
 func (h *Handler) LoginAccount(c *gin.Context) {
 }
 func (h *Handler) EditAccountByID(c *gin.Context) {
