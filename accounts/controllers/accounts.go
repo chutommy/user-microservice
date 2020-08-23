@@ -129,8 +129,41 @@ func (h *Handler) GetAccountByParams(c *gin.Context) {
 	c.JSON(200, accs)
 }
 
+// LoginAccount validates the hashed password of the id's account and the given password.
 func (h *Handler) LoginAccount(c *gin.Context) {
+
+	// get the request body
+	var login models.Login
+	err := c.BindJSON(&login)
+	if err != nil {
+		c.JSON(400, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	// validate
+	ok, err := h.ds.ValidatePassword(c, &login)
+	if err != nil {
+		c.JSON(400, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	// invalid password
+	if !ok {
+		c.JSON(401, gin.H{
+			"message": "incorrect id/password",
+		})
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"message": "successfully loged in",
+	})
 }
+
 func (h *Handler) EditAccountByID(c *gin.Context) {
 }
 func (h *Handler) DeleteAccountByID(c *gin.Context) {
