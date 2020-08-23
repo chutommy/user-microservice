@@ -36,13 +36,13 @@ The Postgres database will be run in the Docker container and the data should pe
     - `UPDATE /accounts/{id}` Update an account.
     - `DELETE /accounts/{id}` Delete an account (soft delete).
 
-## Milestones
+## Steps
 Event | Completed
 ----- | ---------
 Database | August 17, 2020
 Data service | August 20, 2020
+Controller | August 23, 2020
 Configuration |
-Controller |
 Server |
 Documentation |
 Containerization |
