@@ -323,10 +323,10 @@ func (ds *DatabaseService) GetAccountByParams(ctx context.Context, a *models.Acc
 
 // ValidatePassword compares the given hashed password with the password of the the account.
 // The True is returned if the passwords are same.
-func (ds *DatabaseService) ValidatePassword(ctx context.Context, id string, hPasswd string) (bool, error) {
+func (ds *DatabaseService) ValidatePassword(ctx context.Context, login *models.Login) (bool, error) {
 
 	// validate id
-	if _, err := uuid.FromBytes([]byte(id)); err != nil {
+	if _, err := uuid.FromBytes([]byte(login.ID)); err != nil {
 		return false, ErrInvalidID
 	}
 
@@ -338,7 +338,7 @@ func (ds *DatabaseService) ValidatePassword(ctx context.Context, id string, hPas
 
 	var dbPasswd string
 	// run sql
-	err = ds.db.QueryRowContext(ctx, sqls, id).Scan(&dbPasswd)
+	err = ds.db.QueryRowContext(ctx, sqls, login.ID).Scan(&dbPasswd)
 	if err == sql.ErrNoRows {
 		return false, err
 	} else if err != nil {
@@ -346,7 +346,7 @@ func (ds *DatabaseService) ValidatePassword(ctx context.Context, id string, hPas
 	}
 
 	// compare
-	ok := dbPasswd == hPasswd
+	ok := dbPasswd == login.HPassword
 
 	return ok, nil
 }
