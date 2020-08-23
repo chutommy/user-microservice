@@ -190,3 +190,23 @@ func (h *Handler) EditAccountByID(c *gin.Context) {
 		"message": "success (" + a.ID + ")",
 	})
 }
+
+// DeleteAccountByID softly removes the account.
+func (h *Handler) DeleteAccountByID(c *gin.Context) {
+
+	// get the params
+	id := c.Param("id")
+
+	// delete
+	err := h.ds.DeleteAccountByID(c, id)
+	if err != nil {
+		c.JSON(400, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(200, gin.H{
+		"message": "account successfully deleted (" + id + ")",
+	})
+}
