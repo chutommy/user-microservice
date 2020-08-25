@@ -15,6 +15,8 @@ from
 where
   deleted_at = null
 order by
-  $3 $4 offset $2
+  $3 $4
+offset
+  $2
 limit
   $1;
