@@ -1,0 +1,12 @@
+server:
+    address: :3001
+    read_timeout: 500ms
+    read_header_timeout: 200ms
+    idle_timeout: 1s
+
+db:
+    host: 127.0.0.1
+    port: 5432
+    user: postgres
+    password: ferdajekamarad
+    dbname: accounts
