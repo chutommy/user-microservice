@@ -1,10 +1,10 @@
 --  this script run on the database's initialization.
 -- create a function which updates the updated_at timestamp
 create
-or replace function trigger_set_timestamp() returns trigger as $ $ begin new.updated_at = now();
+or replace function trigger_set_timestamp() returns trigger as $$ begin new.updated_at = now();
 return new;
 end;
-$ $ language plpgsql;
+$$ language plpgsql;
 -- create a table
 create table if not exists accounts (
   id uuid primary key,
