@@ -353,7 +353,7 @@ func (ds *DatabaseService) ValidatePassword(ctx context.Context, login *models.L
 
 // EditAccountByID edits the account with the corresponding ID.
 // Editing model must have
-func (ds *DatabaseService) EditAccountByID(ctx context.Context, a *models.Account) error {
+func (ds *DatabaseService) EditAccountByID(ctx context.Context, id string, a *models.Account) error {
 
 	// get sql
 	sqls, err := getQuery("update.sql")
@@ -363,7 +363,7 @@ func (ds *DatabaseService) EditAccountByID(ctx context.Context, a *models.Accoun
 
 	// run sql
 	_, err = ds.db.ExecContext(ctx, sqls,
-		a.ID,
+		id,
 		a.Username,
 		a.Email,
 		a.Phone,

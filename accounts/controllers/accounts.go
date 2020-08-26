@@ -167,6 +167,9 @@ func (h *Handler) LoginAccount(c *gin.Context) {
 // EditAccountByID handle the account's update.
 func (h *Handler) EditAccountByID(c *gin.Context) {
 
+	// get the params
+	id := c.Param("id")
+
 	// get the request body
 	var a models.Account
 	err := c.BindJSON(&a)
@@ -178,7 +181,7 @@ func (h *Handler) EditAccountByID(c *gin.Context) {
 	}
 
 	// udpate the database
-	err = h.ds.EditAccountByID(c, &a)
+	err = h.ds.EditAccountByID(c, id, &a)
 	if err != nil {
 		c.JSON(400, gin.H{
 			"error": err.Error(),
@@ -187,7 +190,7 @@ func (h *Handler) EditAccountByID(c *gin.Context) {
 	}
 
 	c.JSON(200, gin.H{
-		"message": "success (" + a.ID + ")",
+		"message": "success (" + id + ")",
 	})
 }
 
