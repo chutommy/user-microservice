@@ -1,4 +1,4 @@
-module github.com/chutified/appointments
+module github.com/chutified/booking-terminal
 
 go 1.15
 
