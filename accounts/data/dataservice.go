@@ -9,8 +9,8 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/chutified/appointments/accounts/config"
-	"github.com/chutified/appointments/accounts/models"
+	"github.com/chutified/booking-terminal/accounts/config"
+	"github.com/chutified/booking-terminal/accounts/models"
 	"github.com/google/uuid"
 	"github.com/pkg/errors"
 )

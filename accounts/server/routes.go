@@ -1,7 +1,7 @@
 package server
 
 import (
-	"github.com/chutified/appointments/accounts/controllers"
+	"github.com/chutified/booking-terminal/accounts/controllers"
 	"github.com/gin-gonic/gin"
 )
 

@@ -3,7 +3,7 @@ package controllers
 import (
 	"strconv"
 
-	"github.com/chutified/appointments/accounts/models"
+	"github.com/chutified/booking-terminal/accounts/models"
 	"github.com/gin-gonic/gin"
 )
 

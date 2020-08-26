@@ -1,8 +1,8 @@
 package controllers
 
 import (
-	"github.com/chutified/appointments/accounts/config"
-	"github.com/chutified/appointments/accounts/data"
+	"github.com/chutified/booking-terminal/accounts/config"
+	"github.com/chutified/booking-terminal/accounts/data"
 	"github.com/pkg/errors"
 )
 

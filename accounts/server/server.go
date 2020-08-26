@@ -3,8 +3,8 @@ package server
 import (
 	"net/http"
 
-	"github.com/chutified/appointments/accounts/config"
-	"github.com/chutified/appointments/accounts/controllers"
+	"github.com/chutified/booking-terminal/accounts/config"
+	"github.com/chutified/booking-terminal/accounts/controllers"
 	"github.com/pkg/errors"
 )
 
