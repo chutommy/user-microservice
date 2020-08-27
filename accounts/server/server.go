@@ -58,3 +58,12 @@ func (s *server) Start() error {
 	}
 	return nil
 }
+
+// Stop closes all opened connection and services.
+func (s *server) Stop() error {
+	err := s.h.Close()
+	if err != nil {
+		return errors.Wrap(err, "closing server's handler")
+	}
+	return nil
+}
