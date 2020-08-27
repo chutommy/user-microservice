@@ -47,9 +47,12 @@ func (s *server) Init(cfg *config.Config) error {
 		MaxHeaderBytes:    http.DefaultMaxHeaderBytes,
 	}
 
-	// run
-	// TODO gracefully shutdown
-	err = srv.ListenAndServe()
+	return nil
+}
+
+// Start runs the server.
+func (s *server) Start() error {
+	err := s.srv.ListenAndServe()
 	if err != nil {
 		return errors.Wrap(err, "running the server")
 	}
