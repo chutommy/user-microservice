@@ -38,5 +38,5 @@ func GetConfig(filename string) (*Config, error) {
 // rootDir returns the caller's root directory
 func rootDir() string {
 	_, b, _, _ := runtime.Caller(0)
-	return filepath.Dir(b)
+	return filepath.Join(filepath.Dir(b), "..")
 }
