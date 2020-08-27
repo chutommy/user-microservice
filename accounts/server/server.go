@@ -13,28 +13,31 @@ type Server interface {
 	Init(*config.Config) error
 }
 
-type server struct{}
+type server struct {
+	h   *controllers.Handler
+	srv *http.Server
+}
 
 // New constructs the Server interface value.
 func New() Server {
 	return &server{}
 }
 
+// Init initializes server.
 func (s *server) Init(cfg *config.Config) error {
 
 	// initialize handler
-	h := controllers.New()
-	err := h.Init(cfg.Db)
+	s.h = controllers.New()
+	err := s.h.Init(cfg.Db)
 	if err != nil {
 		return errors.Wrap(err, "initializing handler")
 	}
-	defer h.Close()
 
 	// set routings
-	r := SetRoutes(h)
+	r := SetRoutes(s.h)
 
 	// setup the server
-	srv := http.Server{
+	s.srv = &http.Server{
 		Addr:              cfg.Server.Address,
 		Handler:           r,
 		ReadTimeout:       cfg.Server.ReadTimeout,
