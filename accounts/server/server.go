@@ -11,6 +11,8 @@ import (
 // Server allows server's routings and the initialization.
 type Server interface {
 	Init(*config.Config) error
+	Start() error
+	Stop() error
 }
 
 type server struct {
