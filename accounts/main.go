@@ -23,29 +23,35 @@ func main() {
 	// handle gracefull shutdown
 	errs := make(chan error)
 	go func() {
+
 		sig := make(chan os.Signal)
 		signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
+
 		errs <- errors.New((<-sig).String())
 	}()
 
 	// init the server
 	srv := server.New()
 	go func() {
+
 		log.Printf("Server launching on %s...\n", cfg.Server.Address)
 		err = srv.Init(cfg)
 		if err != nil {
 			log.Fatal(err)
 		}
+
 		err = srv.Start()
 		if err != nil {
 			log.Fatal(err)
 		}
 	}()
 	defer func() {
+
 		err = srv.Stop()
 		if err != nil {
 			log.Println(err)
 		}
+
 		log.Println("Server succesfully shut down.")
 	}()
 
