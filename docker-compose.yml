@@ -11,10 +11,10 @@ services:
             PGDATA: /var/lib/postgresql/data/pgdata
             POSTGRES_DB: accounts
         volumes:
-            - ./accounts/db/data:/var/lib/postgresql/data
+            - accountdb:/var/lib/postgresql/data
             - ./accounts/db/init.sql:/docker-entrypoint-initdb.d/init.sql
         ports:
-            - 5432:5432
+            - 10551:5432
 
     accountsrv:
         build: accounts/
@@ -22,4 +22,4 @@ services:
         depends_on:
             - accountdb
         ports:
-            - 10501:3001
+            - 10501:10501

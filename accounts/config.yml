@@ -1,5 +1,5 @@
 server:
-    address: :3001
+    address: :10501
     read_timeout: 500ms
     read_header_timeout: 200ms
     write_timeout: 400ms
@@ -7,7 +7,7 @@ server:
 
 db:
     host: 127.0.0.1
-    port: 5432
+    port: 10551
     user: postgres
     password: postgres
     dbname: accounts
