@@ -73,6 +73,6 @@ Data service | August 20, 2020
 Controller | August 23, 2020
 Configuration | August 25, 2020
 Server | August 31, 2020
-Documentation |
-Containerization |
+Documentation | September 4, 2020
+Containerization | September 7, 2020
 Finish |
