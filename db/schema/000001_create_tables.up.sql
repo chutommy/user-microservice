@@ -16,11 +16,28 @@ create table if not exists users
     email           varchar(64) not null,
     phone_number    varchar(32),
     updated_at      timestamptz,
-    created_at      timestamptz not null
+    created_at      timestamptz not null default now()
 );
 
 alter table users
     add foreign key (gender) references genders (id);
+
+create or replace function update_updated_at()
+    returns trigger
+    language plpgsql
+as
+$$
+begin
+    new.updated_at = now();
+    return new;
+end;
+$$;
+
+create trigger update_trigger
+    after update
+    on users
+    for each row
+execute procedure update_updated_at();
 
 create table if not exists companies
 (
@@ -34,7 +51,7 @@ create table if not exists companies
     website      text,
     work_from    time,
     work_to      time,
-    created_at   timestamptz not null
+    created_at   timestamptz not null default now()
 );
 
 alter table companies
@@ -44,7 +61,7 @@ create table if not exists clients
 (
     client_id  bigint      not null,
     company_id bigint      not null,
-    created_at timestamptz not null,
+    created_at timestamptz not null default now(),
     primary key (client_id, company_id)
 );
 
@@ -58,7 +75,7 @@ create table if not exists employees
 (
     employee_id bigint      not null,
     company_id  bigint      not null,
-    created_at  timestamptz not null,
+    created_at  timestamptz not null default now(),
     deleted_at  timestamptz,
     primary key (employee_id, company_id)
 );
@@ -77,7 +94,7 @@ create table if not exists services
     description   text,
     price         numeric(14, 2),
     time_duration interval,
-    created_at    timestamptz not null,
+    created_at    timestamptz not null default now(),
     deleted_at    timestamptz
 );
 
@@ -89,7 +106,7 @@ create table if not exists conversations
     id         bigserial primary key,
     user_id    bigint      not null,
     company_id bigint      not null,
-    created_at timestamptz not null
+    created_at timestamptz not null default now()
 );
 
 alter table conversations
@@ -106,7 +123,7 @@ create table if not exists messages
     receiver_id     bigint      not null,
     message         text        not null,
     status          varchar(16) not null,
-    posted_at       timestamptz not null
+    posted_at       timestamptz not null default now()
 );
 
 alter table messages
@@ -125,7 +142,7 @@ create table if not exists reservations
     service_id     bigint      not null,
     status         varchar(32) not null,
     reservation_at timestamptz not null,
-    created_at     timestamptz not null,
+    created_at     timestamptz not null default now(),
     canceled_at    timestamptz
 );
 
