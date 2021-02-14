@@ -8,8 +8,8 @@ import (
 )
 
 type Gender struct {
-	ID    int16          `json:"id"`
-	Title sql.NullString `json:"title"`
+	ID    int16  `json:"id"`
+	Title string `json:"title"`
 }
 
 type User struct {
