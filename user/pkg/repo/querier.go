@@ -8,10 +8,10 @@ import (
 )
 
 type Querier interface {
-	CreateGender(ctx context.Context, title string) error
+	CreateGender(ctx context.Context, title string) (Gender, error)
 	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
 	DeleteGender(ctx context.Context, id int16) error
-	GetGender(ctx context.Context, id int16) (Gender, error)
+	GetGender(ctx context.Context, arg GetGenderParams) (Gender, error)
 	GetHashedPassword(ctx context.Context, id int64) (string, error)
 	GetUserByEmail(ctx context.Context, email string) (GetUserByEmailRow, error)
 	GetUserByID(ctx context.Context, id int64) (GetUserByIDRow, error)

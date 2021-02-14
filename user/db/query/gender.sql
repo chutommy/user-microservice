@@ -1,12 +1,13 @@
--- name: CreateGender :exec
+-- name: CreateGender :one
 insert into genders (title)
-values ($1);
+values ($1)
+returning *;
 
 -- name: GetGender :one
 select *
 from genders
 where id = $1
-   or title = $1
+   or title = $2
 limit 1;
 
 -- name: ListGenders :many
