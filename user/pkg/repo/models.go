@@ -23,5 +23,6 @@ type User struct {
 	Email          string         `json:"email"`
 	PhoneNumber    sql.NullString `json:"phone_number"`
 	UpdatedAt      sql.NullTime   `json:"updated_at"`
+	DeletedAt      sql.NullTime   `json:"deleted_at"`
 	CreatedAt      time.Time      `json:"created_at"`
 }
