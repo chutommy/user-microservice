@@ -4,46 +4,19 @@ values ($1, $2, $3, $4, $5, $6, $7, $8)
 returning *;
 
 -- name: GetUserByID :one
-select id,
-       username,
-       first_name,
-       last_name,
-       birth_day,
-       gender,
-       email,
-       phone_number,
-       updated_at,
-       created_at
+select *
 from users
 where id = $1
 limit 1;
 
 -- name: GetUserByUsername :one
-select id,
-       username,
-       first_name,
-       last_name,
-       birth_day,
-       gender,
-       email,
-       phone_number,
-       updated_at,
-       created_at
+select *
 from users
 where username = $1
 limit 1;
 
 -- name: GetUserByEmail :one
-select id,
-       username,
-       first_name,
-       last_name,
-       birth_day,
-       gender,
-       email,
-       phone_number,
-       updated_at,
-       created_at
+select *
 from users
 where email = $1
 limit 1;
