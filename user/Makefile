@@ -13,3 +13,7 @@ migrate-up:
 .PHONY: migrate-down
 migrate-down:
 	docker run --rm -v $(PWD)/db/schema:/migrations --network host migrate/migrate -path /migrations -database $(USER_DB_CONN) -verbose down $(NUM)
+
+.PHONY: test
+test:
+	go test -v -cover ./...
