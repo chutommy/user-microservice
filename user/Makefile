@@ -14,6 +14,10 @@ migrate-up:
 migrate-down:
 	docker run --rm -v $(PWD)/db/schema:/migrations --network host migrate/migrate -path /migrations -database $(USER_DB_CONN) -verbose down $(NUM)
 
+.PHONY: sqlc
+sqlc:
+	docker run --rm -v $(PWD):/src -w /src kjconroy/sqlc generate
+
 .PHONY: test
 test:
 	go test -v -cover ./...
