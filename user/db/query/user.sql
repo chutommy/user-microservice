@@ -4,7 +4,8 @@ values ($1, $2, $3, $4, $5, $6, $7, $8)
 returning *;
 
 -- name: GetUserByID :one
-select username,
+select id,
+       username,
        first_name,
        last_name,
        birth_day,
@@ -18,7 +19,8 @@ where id = $1
 limit 1;
 
 -- name: GetUserByUsername :one
-select username,
+select id,
+       username,
        first_name,
        last_name,
        birth_day,
@@ -32,7 +34,8 @@ where username = $1
 limit 1;
 
 -- name: GetUserByEmail :one
-select username,
+select id,
+       username,
        first_name,
        last_name,
        birth_day,
@@ -45,17 +48,38 @@ from users
 where email = $1
 limit 1;
 
--- name: UpdateUserUsername :exec
+-- name: UpdateUserUsername :one
 update users
 set username = $2
-where id = $1;
+where id = $1
+returning *;
 
--- name: UpdateUserPassword :exec
+-- name: UpdateUserEmail :one
+update users
+set email = $2
+where id = $1
+returning *;
+
+-- name: UpdateUserPhoneNumber :one
+update users
+set phone_number = $2
+where id = $1
+returning *;
+
+-- name: UpdateUserPassword :one
 update users
 set hashed_password = $2
-where id = $1;
+where id = $1
+returning *;
 
--- name: UpdateUserInfo :exec
+-- name: UpdateUserInfo :one
 update users
 set first_name = $2 and last_name = $3 and birth_day = $4 and gender = $5
-where id = $1;
+where id = $1
+returning *;
+
+-- name: GetHashedPassword :one
+select hashed_password
+from users
+where id = $1
+limit 1;
