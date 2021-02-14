@@ -16,6 +16,7 @@ create table if not exists users
     email           varchar(64) not null,
     phone_number    varchar(32),
     updated_at      timestamptz,
+    deleted_at      timestamptz,
     created_at      timestamptz not null default now()
 );
 

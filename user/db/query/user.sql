@@ -78,6 +78,16 @@ set first_name = $2 and last_name = $3 and birth_day = $4 and gender = $5
 where id = $1
 returning *;
 
+-- name: DeleteUserSoft :exec
+update users
+set deleted_at = now()
+where id = $1;
+
+-- name: DeleteUserPermanent :exec
+delete
+from users
+where id = $1;
+
 -- name: GetHashedPassword :one
 select hashed_password
 from users
