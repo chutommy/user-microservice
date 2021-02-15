@@ -22,6 +22,7 @@ type UserService interface {
 	UpdateUserPassword(ctx context.Context, id int64, password string) (User, error)
 	UpdateUserInfo(ctx context.Context, firstName, lastName, gender string, birthDay time.Time) (User, error)
 	DeleteUserSoft(ctx context.Context, id int64) error
+	RecoverDeletedUser(ctx context.Context, id int64) (User, error)
 	DeleteUserPermanent(ctx context.Context, id int64) error
 	VerifyPassword(ctx context.Context, id int64, password string) error
 }
