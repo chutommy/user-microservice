@@ -7,7 +7,7 @@ import (
 
 // UserService describes the service.
 type UserService interface {
-	AddGender(ctx context.Context, title string) (int64, error)
+	AddGender(ctx context.Context, title string) (Gender, error)
 	GetGender(ctx context.Context, id int64, title string) (Gender, error)
 	ListGenders(ctx context.Context) ([]Gender, error)
 	RemoveGender(ctx context.Context, title string) error
