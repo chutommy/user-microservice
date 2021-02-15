@@ -18,6 +18,10 @@ migrate-down:
 sqlc:
 	docker run --rm -v $(PWD):/src -w /src kjconroy/sqlc generate
 
+.PHONY: mock-querier
+mock-querier:
+	docker run --rm -v $(PWD):/pkg -w /pkg vektra/mockery --case camel --dir pkg/repo --outpkg mocks --output pkg/mocks --name Querier
+
 .PHONY: test
 test:
 	go test -v -cover ./...
