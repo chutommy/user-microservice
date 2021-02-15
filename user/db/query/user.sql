@@ -7,48 +7,59 @@ returning *;
 select *
 from users
 where id = $1
+  and deleted_at IS NULL
 limit 1;
 
 -- name: GetUserByUsername :one
 select *
 from users
 where username = $1
+  and deleted_at IS NULL
 limit 1;
 
 -- name: GetUserByEmail :one
 select *
 from users
 where email = $1
+  and deleted_at IS NULL
 limit 1;
 
 -- name: UpdateUserUsername :one
 update users
 set username = $2
 where id = $1
+  and deleted_at IS NULL
 returning *;
 
 -- name: UpdateUserEmail :one
 update users
 set email = $2
 where id = $1
+  and deleted_at IS NULL
 returning *;
 
 -- name: UpdateUserPhoneNumber :one
 update users
 set phone_number = $2
 where id = $1
+  and deleted_at IS NULL
 returning *;
 
 -- name: UpdateUserPassword :one
 update users
 set hashed_password = $2
 where id = $1
+  and deleted_at IS NULL
 returning *;
 
 -- name: UpdateUserInfo :one
 update users
-set first_name = $2 and last_name = $3 and birth_day = $4 and gender = $5
+set first_name = $2,
+    last_name  = $3,
+    birth_day  = $4,
+    gender     = $5
 where id = $1
+  and deleted_at IS NULL
 returning *;
 
 -- name: DeleteUserSoft :exec
@@ -67,10 +78,12 @@ returning *;
 -- name: DeleteUserPermanent :exec
 delete
 from users
-where id = $1;
+where id = $1
+  and deleted_at IS NULL;
 
 -- name: GetHashedPassword :one
 select hashed_password
 from users
 where id = $1
+  and deleted_at IS NULL
 limit 1;
