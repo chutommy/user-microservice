@@ -2,6 +2,7 @@ package repo_test
 
 import (
 	"context"
+	"database/sql"
 	"github.com/stretchr/testify/require"
 	"reflect"
 	"testing"
@@ -86,5 +87,6 @@ func TestQueries_DeleteGender(t *testing.T) {
 	// check database
 	g2, err := testQueries.GetGender(context.Background(), repo.GetGenderParams{ID: g1.ID})
 	require.Error(t, err)
+	require.EqualError(t, sql.ErrNoRows, err.Error())
 	require.Empty(t, g2)
 }
