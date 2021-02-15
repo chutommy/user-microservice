@@ -1,7 +1,7 @@
 create table if not exists genders
 (
     id    smallserial primary key,
-    title varchar(32) not null
+    title varchar(32) not null unique
 );
 
 create table if not exists users
