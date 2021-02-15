@@ -54,7 +54,15 @@ returning *;
 -- name: DeleteUserSoft :exec
 update users
 set deleted_at = now()
-where id = $1;
+where id = $1
+  and deleted_at IS NULL;
+
+-- name: RecoverDeletedUser :one
+update users
+set deleted_at = null
+where id = $1
+  and deleted_at IS NOT NULL
+returning *;
 
 -- name: DeleteUserPermanent :exec
 delete
