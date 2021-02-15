@@ -58,6 +58,7 @@ const deleteUserPermanent = `-- name: DeleteUserPermanent :exec
 delete
 from users
 where id = $1
+  and deleted_at IS NULL
 `
 
 func (q *Queries) DeleteUserPermanent(ctx context.Context, id int64) error {
@@ -69,6 +70,7 @@ const deleteUserSoft = `-- name: DeleteUserSoft :exec
 update users
 set deleted_at = now()
 where id = $1
+  and deleted_at IS NULL
 `
 
 func (q *Queries) DeleteUserSoft(ctx context.Context, id int64) error {
@@ -80,6 +82,7 @@ const getHashedPassword = `-- name: GetHashedPassword :one
 select hashed_password
 from users
 where id = $1
+  and deleted_at IS NULL
 limit 1
 `
 
@@ -94,6 +97,7 @@ const getUserByEmail = `-- name: GetUserByEmail :one
 select id, username, hashed_password, first_name, last_name, birth_day, gender, email, phone_number, updated_at, deleted_at, created_at
 from users
 where email = $1
+  and deleted_at IS NULL
 limit 1
 `
 
@@ -121,6 +125,7 @@ const getUserByID = `-- name: GetUserByID :one
 select id, username, hashed_password, first_name, last_name, birth_day, gender, email, phone_number, updated_at, deleted_at, created_at
 from users
 where id = $1
+  and deleted_at IS NULL
 limit 1
 `
 
@@ -148,6 +153,7 @@ const getUserByUsername = `-- name: GetUserByUsername :one
 select id, username, hashed_password, first_name, last_name, birth_day, gender, email, phone_number, updated_at, deleted_at, created_at
 from users
 where username = $1
+  and deleted_at IS NULL
 limit 1
 `
 
@@ -171,10 +177,39 @@ func (q *Queries) GetUserByUsername(ctx context.Context, username sql.NullString
 	return i, err
 }
 
+const recoverDeletedUser = `-- name: RecoverDeletedUser :one
+update users
+set deleted_at = null
+where id = $1
+  and deleted_at IS NOT NULL
+returning id, username, hashed_password, first_name, last_name, birth_day, gender, email, phone_number, updated_at, deleted_at, created_at
+`
+
+func (q *Queries) RecoverDeletedUser(ctx context.Context, id int64) (User, error) {
+	row := q.db.QueryRowContext(ctx, recoverDeletedUser, id)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.Username,
+		&i.HashedPassword,
+		&i.FirstName,
+		&i.LastName,
+		&i.BirthDay,
+		&i.Gender,
+		&i.Email,
+		&i.PhoneNumber,
+		&i.UpdatedAt,
+		&i.DeletedAt,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
 const updateUserEmail = `-- name: UpdateUserEmail :one
 update users
 set email = $2
 where id = $1
+  and deleted_at IS NULL
 returning id, username, hashed_password, first_name, last_name, birth_day, gender, email, phone_number, updated_at, deleted_at, created_at
 `
 
@@ -205,8 +240,12 @@ func (q *Queries) UpdateUserEmail(ctx context.Context, arg UpdateUserEmailParams
 
 const updateUserInfo = `-- name: UpdateUserInfo :one
 update users
-set first_name = $2 and last_name = $3 and birth_day = $4 and gender = $5
+set first_name = $2,
+    last_name  = $3,
+    birth_day  = $4,
+    gender     = $5
 where id = $1
+  and deleted_at IS NULL
 returning id, username, hashed_password, first_name, last_name, birth_day, gender, email, phone_number, updated_at, deleted_at, created_at
 `
 
@@ -248,6 +287,7 @@ const updateUserPassword = `-- name: UpdateUserPassword :one
 update users
 set hashed_password = $2
 where id = $1
+  and deleted_at IS NULL
 returning id, username, hashed_password, first_name, last_name, birth_day, gender, email, phone_number, updated_at, deleted_at, created_at
 `
 
@@ -280,6 +320,7 @@ const updateUserPhoneNumber = `-- name: UpdateUserPhoneNumber :one
 update users
 set phone_number = $2
 where id = $1
+  and deleted_at IS NULL
 returning id, username, hashed_password, first_name, last_name, birth_day, gender, email, phone_number, updated_at, deleted_at, created_at
 `
 
@@ -312,6 +353,7 @@ const updateUserUsername = `-- name: UpdateUserUsername :one
 update users
 set username = $2
 where id = $1
+  and deleted_at IS NULL
 returning id, username, hashed_password, first_name, last_name, birth_day, gender, email, phone_number, updated_at, deleted_at, created_at
 `
 
