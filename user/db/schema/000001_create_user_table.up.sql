@@ -35,7 +35,7 @@ end;
 $$;
 
 create trigger update_trigger
-    after update
+    before update
     on users
     for each row
 execute procedure update_updated_at();
