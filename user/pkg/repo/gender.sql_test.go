@@ -20,8 +20,7 @@ func createRandomGender(t *testing.T) repo.Gender {
 	require.NotEmpty(t, g1)
 
 	// check db
-	param := repo.GetGenderParams{ID: g1.ID}
-	g2, err := testQueries.GetGender(context.Background(), param)
+	g2, err := testQueries.GetGender(context.Background(), g1.ID)
 	require.NoError(t, err)
 	require.NotEmpty(t, g2)
 
@@ -40,19 +39,9 @@ func TestQueries_GetGender(t *testing.T) {
 	g := createRandomGender(t)
 
 	// check query with id
-	g1, err := testQueries.GetGender(context.Background(), repo.GetGenderParams{ID: g.ID})
+	g1, err := testQueries.GetGender(context.Background(), g.ID)
 	require.NoError(t, err)
 	require.Equal(t, g, g1)
-
-	// check query with title
-	g2, err := testQueries.GetGender(context.Background(), repo.GetGenderParams{Title: g.Title})
-	require.NoError(t, err)
-	require.Equal(t, g, g2)
-
-	// check query without params
-	g3, err := testQueries.GetGender(context.Background(), repo.GetGenderParams{})
-	require.Error(t, err)
-	require.Empty(t, g3)
 }
 
 func TestQueries_ListGenders(t *testing.T) {
@@ -85,7 +74,7 @@ func TestQueries_DeleteGender(t *testing.T) {
 	require.NoError(t, err)
 
 	// check database
-	g2, err := testQueries.GetGender(context.Background(), repo.GetGenderParams{ID: g1.ID})
+	g2, err := testQueries.GetGender(context.Background(), g1.ID)
 	require.Error(t, err)
 	require.EqualError(t, sql.ErrNoRows, err.Error())
 	require.Empty(t, g2)

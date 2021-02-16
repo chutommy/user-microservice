@@ -100,20 +100,20 @@ func (_m *Querier) DeleteUserSoft(ctx context.Context, id int64) error {
 	return r0
 }
 
-// GetGender provides a mock function with given fields: ctx, arg
-func (_m *Querier) GetGender(ctx context.Context, arg repo.GetGenderParams) (repo.Gender, error) {
-	ret := _m.Called(ctx, arg)
+// GetGender provides a mock function with given fields: ctx, id
+func (_m *Querier) GetGender(ctx context.Context, id int16) (repo.Gender, error) {
+	ret := _m.Called(ctx, id)
 
 	var r0 repo.Gender
-	if rf, ok := ret.Get(0).(func(context.Context, repo.GetGenderParams) repo.Gender); ok {
-		r0 = rf(ctx, arg)
+	if rf, ok := ret.Get(0).(func(context.Context, int16) repo.Gender); ok {
+		r0 = rf(ctx, id)
 	} else {
 		r0 = ret.Get(0).(repo.Gender)
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(context.Context, repo.GetGenderParams) error); ok {
-		r1 = rf(ctx, arg)
+	if rf, ok := ret.Get(1).(func(context.Context, int16) error); ok {
+		r1 = rf(ctx, id)
 	} else {
 		r1 = ret.Error(1)
 	}

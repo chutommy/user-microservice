@@ -35,17 +35,11 @@ const getGender = `-- name: GetGender :one
 select id, title
 from genders
 where id = $1
-   or title = $2
 limit 1
 `
 
-type GetGenderParams struct {
-	ID    int16  `json:"id"`
-	Title string `json:"title"`
-}
-
-func (q *Queries) GetGender(ctx context.Context, arg GetGenderParams) (Gender, error) {
-	row := q.db.QueryRowContext(ctx, getGender, arg.ID, arg.Title)
+func (q *Queries) GetGender(ctx context.Context, id int16) (Gender, error) {
+	row := q.db.QueryRowContext(ctx, getGender, id)
 	var i Gender
 	err := row.Scan(&i.ID, &i.Title)
 	return i, err
