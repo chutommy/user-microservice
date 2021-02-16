@@ -3,26 +3,27 @@ package service
 import (
 	"context"
 	"time"
+	"user/pkg/repo"
 )
 
 // UserService describes the service.
 type UserService interface {
-	AddGender(ctx context.Context, title string) (Gender, error)
-	GetGender(ctx context.Context, id int64, title string) (Gender, error)
-	ListGenders(ctx context.Context) ([]Gender, error)
-	RemoveGender(ctx context.Context, title string) error
+	AddGender(ctx context.Context, title string) (repo.Gender, error)
+	GetGender(ctx context.Context, id int16) (repo.Gender, error)
+	ListGenders(ctx context.Context) ([]repo.Gender, error)
+	RemoveGender(ctx context.Context, id int16) error
 
-	CreateUser(ctx context.Context, username, password, firstName, lastName, gender, email, phoneNumber string, birthDay time.Time) (User, error)
-	GetUserByID(ctx context.Context, id int64) (User, error)
-	GetUserByUsername(ctx context.Context, username string) (User, error)
-	GetUserByEmail(ctx context.Context, email string) (User, error)
-	UpdateUserUsername(ctx context.Context, id int64, username string) (User, error)
-	UpdateUserEmail(ctx context.Context, id int64, email string) (User, error)
-	UpdateUserPhoneNumber(ctx context.Context, id int64, phoneNumber string) (User, error)
-	UpdateUserPassword(ctx context.Context, id int64, password string) (User, error)
-	UpdateUserInfo(ctx context.Context, firstName, lastName, gender string, birthDay time.Time) (User, error)
+	CreateUser(ctx context.Context, username, password, firstName, lastName, gender, email, phoneNumber string, birthDay time.Time) (repo.User, error)
+	GetUserByID(ctx context.Context, id int64) (repo.User, error)
+	GetUserByUsername(ctx context.Context, username string) (repo.User, error)
+	GetUserByEmail(ctx context.Context, email string) (repo.User, error)
+	UpdateUserUsername(ctx context.Context, id int64, username string) (repo.User, error)
+	UpdateUserEmail(ctx context.Context, id int64, email string) (repo.User, error)
+	UpdateUserPhoneNumber(ctx context.Context, id int64, phoneNumber string) (repo.User, error)
+	UpdateUserPassword(ctx context.Context, id int64, password string) (repo.User, error)
+	UpdateUserInfo(ctx context.Context, firstName, lastName, gender string, birthDay time.Time) (repo.User, error)
 	DeleteUserSoft(ctx context.Context, id int64) error
-	RecoverDeletedUser(ctx context.Context, id int64) (User, error)
+	RecoverDeletedUser(ctx context.Context, id int64) (repo.User, error)
 	DeleteUserPermanent(ctx context.Context, id int64) error
 	VerifyPassword(ctx context.Context, id int64, password string) error
 }
