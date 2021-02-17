@@ -20,7 +20,7 @@ type UserService interface {
 	ListGenders(ctx context.Context) ([]repo.Gender, error)
 	RemoveGender(ctx context.Context, id int16) error
 
-	CreateUser(ctx context.Context, username, password, firstName, lastName, gender, email, phoneNumber string, birthDay time.Time) (repo.User, error)
+	CreateUser(ctx context.Context, username, password, firstName, lastName string, gender int16, email, phoneNumber string, birthDay time.Time) (repo.User, error)
 	GetUserByID(ctx context.Context, id int64) (repo.User, error)
 	GetUserByUsername(ctx context.Context, username string) (repo.User, error)
 	GetUserByEmail(ctx context.Context, email string) (repo.User, error)
@@ -115,7 +115,7 @@ func (b *basicUserService) RemoveGender(ctx context.Context, id int16) error {
 
 	return nil
 }
-func (b *basicUserService) CreateUser(ctx context.Context, username string, password string, firstName string, lastName string, gender string, email string, phoneNumber string, birthDay time.Time) (r0 repo.User, e1 error) {
+func (b *basicUserService) CreateUser(ctx context.Context, username string, password string, firstName string, lastName string, gender int16, email string, phoneNumber string, birthDay time.Time) (r0 repo.User, e1 error) {
 	// TODO implement the business logic of CreateUser
 	return r0, e1
 }
