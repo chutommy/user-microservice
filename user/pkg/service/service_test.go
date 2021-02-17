@@ -275,7 +275,8 @@ func TestBasicUserService_CreateUser(t *testing.T) {
 
 	// prepare password
 	password := util.RandomString()
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	hashedPasswordB, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	hashedPassword := string(hashedPasswordB)
 	require.NoError(t, err)
 
 	user := repo.User{
@@ -378,7 +379,7 @@ func TestBasicUserService_CreateUser(t *testing.T) {
 				birthday:    user.BirthDay.Time,
 			},
 			exp: exp{
-				user: repo.Gender{},
+				user: repo.User{},
 				err:  service.ErrEmptyPassword,
 			},
 		},
