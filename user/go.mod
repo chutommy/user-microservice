@@ -14,6 +14,7 @@ require (
 	github.com/prometheus/client_golang v1.9.0
 	github.com/stretchr/testify v1.5.1
 	go.uber.org/multierr v1.3.0
+	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9
 	golang.org/x/net v0.0.0-20210119194325-5f4716e94777
 	google.golang.org/grpc v1.35.0
 	google.golang.org/protobuf v1.25.0
