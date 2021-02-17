@@ -4,10 +4,12 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"testing"
+
 	"github.com/lib/pq"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
-	"testing"
+
 	"user/pkg/mocks"
 	"user/pkg/repo"
 	"user/pkg/service"
@@ -260,6 +262,56 @@ func TestBasicUserService_RemoveGender(t *testing.T) {
 			require.True(t, errors.Is(err, test.expErr))
 
 			mockRepo.AssertExpectations(t)
+		})
+	}
+}
+
+func TestBasicUserService_CreateUser(t *testing.T) {
+	tests := []struct {
+		name string
+	}{
+		// TODO: test cases
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+
+		})
+	}
+}
+
+func TestBasicUserService_GetUserByID(t *testing.T) {
+	tests := []struct {
+		name string
+	}{
+		// TODO: test cases
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+
+		})
+	}
+}
+func TestBasicUserService_GetUserByUsername(t *testing.T) {
+	tests := []struct {
+		name string
+	}{
+		// TODO: test cases
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+
+		})
+	}
+}
+func TestBasicUserService_GetUserByEmail(t *testing.T) {
+	tests := []struct {
+		name string
+	}{
+		// TODO: test cases
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+
 		})
 	}
 }

@@ -5,9 +5,11 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"time"
+
 	"github.com/lib/pq"
 	"go.uber.org/multierr"
-	"time"
+
 	"user/pkg/repo"
 )
 
@@ -175,7 +177,7 @@ func NewBasicUserService(repo repo.Querier) UserService {
 
 // New returns a UserService with all of the expected middleware wired in.
 func New(repo repo.Querier, middleware []Middleware) UserService {
-	var svc UserService = NewBasicUserService(repo)
+	var svc = NewBasicUserService(repo)
 	for _, m := range middleware {
 		svc = m(svc)
 	}
