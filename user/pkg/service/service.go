@@ -48,6 +48,8 @@ var (
 	ErrEmptySearchKeys = errors.New("request search keys cannot be empty")
 	// ErrEmptyID is returned if empty ID value is provided.
 	ErrEmptyID = errors.New("id field cannot be of null value")
+	// ErrEmptyPassword is returned when password field is not proviced.
+	ErrEmptyPassword = errors.New("password field is missing")
 )
 
 type basicUserService struct {

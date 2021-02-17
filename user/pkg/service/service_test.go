@@ -5,10 +5,12 @@ import (
 	"database/sql"
 	"errors"
 	"testing"
+	"time"
 
 	"github.com/lib/pq"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
+	"golang.org/x/crypto/bcrypt"
 
 	"user/pkg/mocks"
 	"user/pkg/repo"
@@ -267,14 +269,133 @@ func TestBasicUserService_RemoveGender(t *testing.T) {
 }
 
 func TestBasicUserService_CreateUser(t *testing.T) {
+	// get date
+	now := time.Now()
+	today := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, &time.Location{})
+
+	// prepare password
+	password := util.RandomString()
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	require.NoError(t, err)
+
+	user := repo.User{
+		ID: util.RandomInt(0, 1024),
+		Username: sql.NullString{
+			String: util.RandomString(),
+			Valid:  true,
+		},
+		HashedPassword: hashedPassword,
+		FirstName:      util.RandomShortString(),
+		LastName:       util.RandomLongString(),
+		BirthDay: sql.NullTime{
+			Time:  today.AddDate(-20, 0, 0),
+			Valid: true,
+		},
+		Gender: int16(util.RandomInt(0, 256)),
+		Email:  util.RandomEmail(),
+		PhoneNumber: sql.NullString{
+			String: util.RandomPhoneNumber(),
+			Valid:  true,
+		},
+		UpdatedAt: sql.NullTime{Valid: false},
+		DeletedAt: sql.NullTime{Valid: false},
+		CreatedAt: now,
+	}
+
+	type inp struct {
+		username    string
+		password    string
+		firstName   string
+		lastName    string
+		gender      int16
+		email       string
+		phoneNumber string
+		birthday    time.Time
+	}
+
+	type exp struct {
+		user repo.User
+		err  error
+	}
+
 	tests := []struct {
-		name string
+		name      string
+		buildStub func(q *mocks.Querier)
+		inp       inp
+		exp       exp
 	}{
-		// TODO: test cases
+		{
+			name: "OK",
+			buildStub: func(q *mocks.Querier) {
+				q.On("CreateUser", mock.Anything, repo.CreateUserParams{
+					Username:       user.Username,
+					HashedPassword: user.HashedPassword,
+					FirstName:      user.FirstName,
+					LastName:       user.LastName,
+					BirthDay:       user.BirthDay,
+					Gender:         user.Gender,
+					Email:          user.Email,
+					PhoneNumber:    user.PhoneNumber,
+				}, nil).Return(user, nil)
+			},
+			inp: inp{
+				username:    user.Username.String,
+				password:    password,
+				firstName:   user.FirstName,
+				lastName:    user.LastName,
+				gender:      user.Gender,
+				email:       user.Email,
+				phoneNumber: user.PhoneNumber.String,
+				birthday:    user.BirthDay.Time,
+			},
+			exp: exp{
+				user: user,
+				err:  nil,
+			},
+		},
+		{
+			name: "EmptyPassword",
+			buildStub: func(q *mocks.Querier) {
+				q.On("CreateUser", mock.Anything, repo.CreateUserParams{
+					Username:       user.Username,
+					HashedPassword: "",
+					FirstName:      user.FirstName,
+					LastName:       user.LastName,
+					BirthDay:       user.BirthDay,
+					Gender:         user.Gender,
+					Email:          user.Email,
+					PhoneNumber:    user.PhoneNumber,
+				}, nil).Return(repo.Gender{}, service.ErrEmptyPassword)
+			},
+			inp: inp{
+				username:    user.Username.String,
+				password:    "",
+				firstName:   user.FirstName,
+				lastName:    user.LastName,
+				gender:      user.Gender,
+				email:       user.Email,
+				phoneNumber: user.PhoneNumber.String,
+				birthday:    user.BirthDay.Time,
+			},
+			exp: exp{
+				user: repo.Gender{},
+				err:  service.ErrEmptyPassword,
+			},
+		},
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
+			// build service
+			mockRepo := new(mocks.Querier)
+			test.buildStub(mockRepo)
+			svc := service.NewBasicUserService(mockRepo)
 
+			// serve
+			u, err := svc.CreateUser(context.Background(), test.inp.username, test.inp.password, test.inp.firstName, test.inp.lastName, test.inp.gender, test.inp.email, test.inp.phoneNumber, test.inp.birthday)
+			require.True(t, errors.Is(err, test.exp.err))
+			require.Equal(t, test.exp.user, u)
+
+			mockRepo.AssertExpectations(t)
 		})
 	}
 }
@@ -304,6 +425,120 @@ func TestBasicUserService_GetUserByUsername(t *testing.T) {
 	}
 }
 func TestBasicUserService_GetUserByEmail(t *testing.T) {
+	tests := []struct {
+		name string
+	}{
+		// TODO: test cases
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+
+		})
+	}
+}
+
+func TestBasicUserService_UpdateUserUsername(t *testing.T) {
+	tests := []struct {
+		name string
+	}{
+		// TODO: test cases
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+
+		})
+	}
+}
+func TestBasicUserService_UpdateUserEmail(t *testing.T) {
+	tests := []struct {
+		name string
+	}{
+		// TODO: test cases
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+
+		})
+	}
+}
+func TestBasicUserService_UpdateUserPhoneNumber(t *testing.T) {
+	tests := []struct {
+		name string
+	}{
+		// TODO: test cases
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+
+		})
+	}
+}
+func TestBasicUserService_UpdateUserPassword(t *testing.T) {
+	tests := []struct {
+		name string
+	}{
+		// TODO: test cases
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+
+		})
+	}
+}
+
+func TestBasicUserService_UpdateUserInfo(t *testing.T) {
+	tests := []struct {
+		name string
+	}{
+		// TODO: test cases
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+
+		})
+	}
+}
+
+func TestBasicUserService_DeleteUserSoft(t *testing.T) {
+	tests := []struct {
+		name string
+	}{
+		// TODO: test cases
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+
+		})
+	}
+}
+
+func TestBasicUserService_RecoverDeletedUser(t *testing.T) {
+	tests := []struct {
+		name string
+	}{
+		// TODO: test cases
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+
+		})
+	}
+}
+
+func TestBasicUserService_DeleteUserPermanent(t *testing.T) {
+	tests := []struct {
+		name string
+	}{
+		// TODO: test cases
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+
+		})
+	}
+}
+
+func TestBasicUserService_VerifyPassword(t *testing.T) {
 	tests := []struct {
 		name string
 	}{
