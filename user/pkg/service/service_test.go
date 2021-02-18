@@ -348,21 +348,8 @@ func TestBasicUserService_CreateUser(t *testing.T) {
 			},
 		},
 		{
-			name: "EmptyPassword",
-			buildStub: func(q *mocks.Querier) {
-				q.On("CreateUser", mock.Anything, repo.CreateUserParams{
-					HashedPassword: "",
-					FirstName:      user.FirstName,
-					LastName:       user.LastName,
-					BirthDay:       user.BirthDay,
-					Gender:         user.Gender,
-					Email:          user.Email,
-					PhoneNumber:    user.PhoneNumber,
-				}, nil).Return(repo.Gender{}, pq.Error{
-					Code:    "23502",
-					Message: "null value in column \"hashed_password\" violates not-null constraint",
-				})
-			},
+			name:      "EmptyPassword",
+			buildStub: func(q *mocks.Querier) {},
 			inp: inp{
 				password:    "",
 				firstName:   user.FirstName,
@@ -378,21 +365,8 @@ func TestBasicUserService_CreateUser(t *testing.T) {
 			},
 		},
 		{
-			name: "EmptyFirstName",
-			buildStub: func(q *mocks.Querier) {
-				q.On("CreateUser", mock.Anything, repo.CreateUserParams{
-					HashedPassword: user.HashedPassword,
-					FirstName:      "",
-					LastName:       user.LastName,
-					BirthDay:       user.BirthDay,
-					Gender:         user.Gender,
-					Email:          user.Email,
-					PhoneNumber:    user.PhoneNumber,
-				}, nil).Return(repo.User{}, pq.Error{
-					Code:    "23502",
-					Message: "null value in column \"first_name\" violates not-null constraint",
-				})
-			},
+			name:      "EmptyFirstName",
+			buildStub: func(q *mocks.Querier) {},
 			inp: inp{
 				password:    password,
 				firstName:   user.FirstName,
@@ -408,21 +382,8 @@ func TestBasicUserService_CreateUser(t *testing.T) {
 			},
 		},
 		{
-			name: "EmptyLastName",
-			buildStub: func(q *mocks.Querier) {
-				q.On("CreateUser", mock.Anything, repo.CreateUserParams{
-					HashedPassword: user.HashedPassword,
-					FirstName:      user.FirstName,
-					LastName:       "",
-					BirthDay:       user.BirthDay,
-					Gender:         user.Gender,
-					Email:          user.Email,
-					PhoneNumber:    user.PhoneNumber,
-				}, nil).Return(repo.User{}, pq.Error{
-					Code:    "23502",
-					Message: "null value in column \"last_name\" violates not-null constraint",
-				})
-			},
+			name:      "EmptyLastName",
+			buildStub: func(q *mocks.Querier) {},
 			inp: inp{
 				password:    password,
 				firstName:   user.FirstName,
@@ -438,21 +399,8 @@ func TestBasicUserService_CreateUser(t *testing.T) {
 			},
 		},
 		{
-			name: "EmptyEmail",
-			buildStub: func(q *mocks.Querier) {
-				q.On("CreateUser", mock.Anything, repo.CreateUserParams{
-					HashedPassword: user.HashedPassword,
-					FirstName:      user.FirstName,
-					LastName:       user.LastName,
-					BirthDay:       user.BirthDay,
-					Gender:         user.Gender,
-					Email:          "",
-					PhoneNumber:    user.PhoneNumber,
-				}, nil).Return(repo.User{}, pq.Error{
-					Code:    "23502",
-					Message: "null value in column \"email\" violates not-null constraint",
-				})
-			},
+			name:      "EmptyEmail",
+			buildStub: func(q *mocks.Querier) {},
 			inp: inp{
 				password:    password,
 				firstName:   user.FirstName,
