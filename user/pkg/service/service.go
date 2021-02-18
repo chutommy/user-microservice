@@ -46,8 +46,16 @@ var (
 	ErrEmptySearchKeys = errors.New("request search keys cannot be empty")
 	// ErrEmptyID is returned if empty ID value is provided.
 	ErrEmptyID = errors.New("id field cannot be of null value")
-	// ErrEmptyPassword is returned when password field is not proviced.
+	// ErrEmptyPassword is returned when password field is not provided.
 	ErrEmptyPassword = errors.New("password field is missing")
+	// ErrEmptyFirstName is returned whenever the required firstName field is missing.
+	ErrEmptyFirstName = errors.New("firstName field is missing")
+	// ErrEmptyLastName is returned whenever the required lastName field is missing.
+	ErrEmptyLastName = errors.New("lastName field is missing")
+	// ErrEmptyEmail is returned whenever the required email field is missing.
+	ErrEmptyEmail = errors.New("email field is missing")
+	// ErrUniqueEmailViolation is returned if duplicated email is trying to be inserted.
+	ErrUniqueEmailViolation = errors.New("email field already exists")
 )
 
 type basicUserService struct {
@@ -115,7 +123,7 @@ func (b *basicUserService) RemoveGender(ctx context.Context, id int16) error {
 
 	return nil
 }
-func (b *basicUserService) CreateUser(ctx context.Context, username string, password string, firstName string, lastName string, gender int16, email string, phoneNumber string, birthDay time.Time) (r0 repo.User, e1 error) {
+func (b *basicUserService) CreateUser(ctx context.Context, password string, firstName string, lastName string, gender int16, email string, phoneNumber string, birthDay time.Time) (r0 repo.User, e1 error) {
 	// TODO implement the business logic of CreateUser
 	return r0, e1
 }

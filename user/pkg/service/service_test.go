@@ -358,7 +358,10 @@ func TestBasicUserService_CreateUser(t *testing.T) {
 					Gender:         user.Gender,
 					Email:          user.Email,
 					PhoneNumber:    user.PhoneNumber,
-				}, nil).Return(repo.Gender{}, service.ErrEmptyPassword)
+				}, nil).Return(repo.Gender{}, pq.Error{
+					Code:    "23502",
+					Message: "null value in column \"hashed_password\" violates not-null constraint",
+				})
 			},
 			inp: inp{
 				password:    "",
@@ -374,7 +377,155 @@ func TestBasicUserService_CreateUser(t *testing.T) {
 				err:  service.ErrEmptyPassword,
 			},
 		},
+		{
+			name: "EmptyFirstName",
+			buildStub: func(q *mocks.Querier) {
+				q.On("CreateUser", mock.Anything, repo.CreateUserParams{
+					HashedPassword: user.HashedPassword,
+					FirstName:      "",
+					LastName:       user.LastName,
+					BirthDay:       user.BirthDay,
+					Gender:         user.Gender,
+					Email:          user.Email,
+					PhoneNumber:    user.PhoneNumber,
+				}, nil).Return(repo.User{}, pq.Error{
+					Code:    "23502",
+					Message: "null value in column \"first_name\" violates not-null constraint",
+				})
+			},
+			inp: inp{
+				password:    password,
+				firstName:   user.FirstName,
+				lastName:    "",
+				gender:      user.Gender,
+				email:       user.Email,
+				phoneNumber: user.PhoneNumber.String,
+				birthday:    user.BirthDay.Time,
+			},
+			exp: exp{
+				user: repo.User{},
+				err:  service.ErrEmptyFirstName,
+			},
+		},
+		{
+			name: "EmptyLastName",
+			buildStub: func(q *mocks.Querier) {
+				q.On("CreateUser", mock.Anything, repo.CreateUserParams{
+					HashedPassword: user.HashedPassword,
+					FirstName:      user.FirstName,
+					LastName:       "",
+					BirthDay:       user.BirthDay,
+					Gender:         user.Gender,
+					Email:          user.Email,
+					PhoneNumber:    user.PhoneNumber,
+				}, nil).Return(repo.User{}, pq.Error{
+					Code:    "23502",
+					Message: "null value in column \"last_name\" violates not-null constraint",
+				})
+			},
+			inp: inp{
+				password:    password,
+				firstName:   user.FirstName,
+				lastName:    "",
+				gender:      user.Gender,
+				email:       user.Email,
+				phoneNumber: user.PhoneNumber.String,
+				birthday:    user.BirthDay.Time,
+			},
+			exp: exp{
+				user: repo.User{},
+				err:  service.ErrEmptyLastName,
+			},
+		},
+		{
+			name: "EmptyEmail",
+			buildStub: func(q *mocks.Querier) {
+				q.On("CreateUser", mock.Anything, repo.CreateUserParams{
+					HashedPassword: user.HashedPassword,
+					FirstName:      user.FirstName,
+					LastName:       user.LastName,
+					BirthDay:       user.BirthDay,
+					Gender:         user.Gender,
+					Email:          "",
+					PhoneNumber:    user.PhoneNumber,
+				}, nil).Return(repo.User{}, pq.Error{
+					Code:    "23502",
+					Message: "null value in column \"email\" violates not-null constraint",
+				})
+			},
+			inp: inp{
+				password:    password,
+				firstName:   user.FirstName,
+				lastName:    user.LastName,
+				gender:      user.Gender,
+				email:       "",
+				phoneNumber: user.PhoneNumber.String,
+				birthday:    user.BirthDay.Time,
+			},
+			exp: exp{
+				user: repo.User{},
+				err:  service.ErrEmptyEmail,
+			},
+		},
+		{
+			name: "DuplicatedEmail",
+			buildStub: func(q *mocks.Querier) {
+				q.On("CreateUser", mock.Anything, repo.CreateUserParams{
+					HashedPassword: user.HashedPassword,
+					FirstName:      user.FirstName,
+					LastName:       user.LastName,
+					BirthDay:       user.BirthDay,
+					Gender:         user.Gender,
+					Email:          user.Email,
+					PhoneNumber:    user.PhoneNumber,
+				}, nil).Return(repo.User{}, pq.Error{
+					Code:    "23505",
+					Message: "duplicate key value violates unique constraint \"users_email_key\"",
+				})
+			},
+			inp: inp{
+				password:    password,
+				firstName:   user.FirstName,
+				lastName:    user.LastName,
+				gender:      user.Gender,
+				email:       user.Email,
+				phoneNumber: user.PhoneNumber.String,
+				birthday:    user.BirthDay.Time,
+			},
+			exp: exp{
+				user: repo.User{},
+				err:  service.ErrUniqueEmailViolation,
+			},
+		},
+		{
+			name: "InternalError",
+			buildStub: func(q *mocks.Querier) {
+				q.On("CreateUser", mock.Anything, repo.CreateUserParams{
+					HashedPassword: user.HashedPassword,
+					FirstName:      user.FirstName,
+					LastName:       user.LastName,
+					BirthDay:       user.BirthDay,
+					Gender:         user.Gender,
+					Email:          user.Email,
+					PhoneNumber:    user.PhoneNumber,
+				}, nil).Return(repo.User{}, sql.ErrConnDone)
+			},
+			inp: inp{
+				password:    password,
+				firstName:   user.FirstName,
+				lastName:    user.LastName,
+				gender:      user.Gender,
+				email:       user.Email,
+				phoneNumber: user.PhoneNumber.String,
+				birthday:    user.BirthDay.Time,
+			},
+			exp: exp{
+				user: repo.User{},
+				err:  service.ErrInternalDBError,
+			},
+		},
 	}
+
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			// build service
