@@ -3,10 +3,12 @@ package repo_test
 import (
 	"context"
 	"database/sql"
-	"github.com/stretchr/testify/require"
 	"reflect"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/require"
+
 	"user/pkg/repo"
 	"user/pkg/util"
 )
@@ -18,10 +20,6 @@ func createRandomUser(t *testing.T) repo.User {
 	g := createRandomGender(t)
 
 	param := repo.CreateUserParams{
-		Username: sql.NullString{
-			String: util.RandomString(),
-			Valid:  true,
-		},
 		HashedPassword: util.RandomPassword(),
 		FirstName:      util.RandomShortString(),
 		LastName:       util.RandomLongString(),
@@ -74,15 +72,6 @@ func TestQueries_GetUserByID(t *testing.T) {
 	compareUsers(t, u1, u2)
 }
 
-func TestQueries_GetUserByUsername(t *testing.T) {
-	u1 := createRandomUser(t)
-
-	u2, err := testQueries.GetUserByUsername(context.Background(), u1.Username)
-	require.NoError(t, err)
-	require.NotEmpty(t, u2)
-	compareUsers(t, u1, u2)
-}
-
 func TestQueries_GetUserByEmail(t *testing.T) {
 	u1 := createRandomUser(t)
 
@@ -90,41 +79,6 @@ func TestQueries_GetUserByEmail(t *testing.T) {
 	require.NoError(t, err)
 	require.NotEmpty(t, u2)
 	compareUsers(t, u1, u2)
-}
-
-func TestQueries_UpdateUserUsername(t *testing.T) {
-	u1 := createRandomUser(t)
-
-	param := repo.UpdateUserUsernameParams{
-		ID: u1.ID,
-		Username: sql.NullString{
-			String: util.RandomString(),
-			Valid:  true,
-		},
-	}
-
-	u2, err := testQueries.UpdateUserUsername(context.Background(), param)
-	require.NoError(t, err)
-	require.NotEmpty(t, u2)
-
-	u3, err := testQueries.GetUserByID(context.Background(), u1.ID)
-	require.NoError(t, err)
-	require.NotEmpty(t, u3)
-
-	// check values
-	require.True(t, reflect.DeepEqual(u2, u3))
-	require.Equal(t, u1.ID, u2.ID)
-	require.Equal(t, param.Username, u2.Username)
-	require.Equal(t, u1.HashedPassword, u2.HashedPassword)
-	require.Equal(t, u1.FirstName, u2.FirstName)
-	require.Equal(t, u1.LastName, u2.LastName)
-	require.Equal(t, u1.BirthDay, u2.BirthDay)
-	require.Equal(t, u1.Gender, u2.Gender)
-	require.Equal(t, u1.Email, u2.Email)
-	require.Equal(t, u1.PhoneNumber, u2.PhoneNumber)
-	require.Equal(t, u1.CreatedAt, u2.CreatedAt)
-	require.Equal(t, u1.DeletedAt, u2.DeletedAt)
-	require.NotEqual(t, u1.UpdatedAt, u2.UpdatedAt) // was updated
 }
 
 func TestQueries_UpdateUserEmail(t *testing.T) {
@@ -146,7 +100,6 @@ func TestQueries_UpdateUserEmail(t *testing.T) {
 	// check values
 	require.True(t, reflect.DeepEqual(u2, u3))
 	require.Equal(t, u1.ID, u2.ID)
-	require.Equal(t, u1.Username, u2.Username)
 	require.Equal(t, u1.HashedPassword, u2.HashedPassword)
 	require.Equal(t, u1.FirstName, u2.FirstName)
 	require.Equal(t, u1.LastName, u2.LastName)
@@ -181,7 +134,6 @@ func TestQueries_UpdateUserPhoneNumber(t *testing.T) {
 	// check values
 	require.True(t, reflect.DeepEqual(u2, u3))
 	require.Equal(t, u1.ID, u2.ID)
-	require.Equal(t, u1.Username, u2.Username)
 	require.Equal(t, u1.HashedPassword, u2.HashedPassword)
 	require.Equal(t, u1.FirstName, u2.FirstName)
 	require.Equal(t, u1.LastName, u2.LastName)
@@ -213,7 +165,6 @@ func TestQueries_UpdateUserPassword(t *testing.T) {
 	// check values
 	require.True(t, reflect.DeepEqual(u2, u3))
 	require.Equal(t, u1.ID, u2.ID)
-	require.Equal(t, u1.Username, u2.Username)
 	require.Equal(t, param.HashedPassword, u2.HashedPassword)
 	require.Equal(t, u1.FirstName, u2.FirstName)
 	require.Equal(t, u1.LastName, u2.LastName)
@@ -256,7 +207,6 @@ func TestQueries_UpdateUserInfo(t *testing.T) {
 	// check values
 	require.True(t, reflect.DeepEqual(u2, u3))
 	require.Equal(t, u1.ID, u2.ID)
-	require.Equal(t, u1.Username, u2.Username)
 	require.Equal(t, u1.HashedPassword, u2.HashedPassword)
 	require.Equal(t, param.FirstName, u2.FirstName)
 	require.Equal(t, param.LastName, u2.LastName)
@@ -289,7 +239,6 @@ func TestQueries_DeleteUserSoft(t *testing.T) {
 
 	// check values
 	require.Equal(t, u1.ID, u3.ID)
-	require.Equal(t, u1.Username, u3.Username)
 	require.Equal(t, u1.HashedPassword, u3.HashedPassword)
 	require.Equal(t, u1.FirstName, u3.FirstName)
 	require.Equal(t, u1.LastName, u3.LastName)
@@ -329,7 +278,6 @@ func compareUsers(t *testing.T, u1, u2 repo.User) {
 	require.NotEmpty(t, u2)
 
 	require.Equal(t, u1.ID, u2.ID)
-	require.Equal(t, u1.Username, u2.Username)
 	require.Equal(t, u1.HashedPassword, u2.HashedPassword)
 	require.Equal(t, u1.FirstName, u2.FirstName)
 	require.Equal(t, u1.LastName, u2.LastName)

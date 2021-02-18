@@ -20,11 +20,9 @@ type UserService interface {
 	ListGenders(ctx context.Context) ([]repo.Gender, error)
 	RemoveGender(ctx context.Context, id int16) error
 
-	CreateUser(ctx context.Context, username, password, firstName, lastName string, gender int16, email, phoneNumber string, birthDay time.Time) (repo.User, error)
+	CreateUser(ctx context.Context, password, firstName, lastName string, gender int16, email, phoneNumber string, birthDay time.Time) (repo.User, error)
 	GetUserByID(ctx context.Context, id int64) (repo.User, error)
-	GetUserByUsername(ctx context.Context, username string) (repo.User, error)
 	GetUserByEmail(ctx context.Context, email string) (repo.User, error)
-	UpdateUserUsername(ctx context.Context, id int64, username string) (repo.User, error)
 	UpdateUserEmail(ctx context.Context, id int64, email string) (repo.User, error)
 	UpdateUserPhoneNumber(ctx context.Context, id int64, phoneNumber string) (repo.User, error)
 	UpdateUserPassword(ctx context.Context, id int64, password string) (repo.User, error)
@@ -125,16 +123,8 @@ func (b *basicUserService) GetUserByID(ctx context.Context, id int64) (r0 repo.U
 	// TODO implement the business logic of GetUserByID
 	return r0, e1
 }
-func (b *basicUserService) GetUserByUsername(ctx context.Context, username string) (r0 repo.User, e1 error) {
-	// TODO implement the business logic of GetUserByUsername
-	return r0, e1
-}
 func (b *basicUserService) GetUserByEmail(ctx context.Context, email string) (r0 repo.User, e1 error) {
 	// TODO implement the business logic of GetUserByEmail
-	return r0, e1
-}
-func (b *basicUserService) UpdateUserUsername(ctx context.Context, id int64, username string) (r0 repo.User, e1 error) {
-	// TODO implement the business logic of UpdateUserUsername
 	return r0, e1
 }
 func (b *basicUserService) UpdateUserEmail(ctx context.Context, id int64, email string) (r0 repo.User, e1 error) {

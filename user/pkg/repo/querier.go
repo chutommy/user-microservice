@@ -4,7 +4,6 @@ package repo
 
 import (
 	"context"
-	"database/sql"
 )
 
 type Querier interface {
@@ -17,14 +16,12 @@ type Querier interface {
 	GetHashedPassword(ctx context.Context, id int64) (string, error)
 	GetUserByEmail(ctx context.Context, email string) (User, error)
 	GetUserByID(ctx context.Context, id int64) (User, error)
-	GetUserByUsername(ctx context.Context, username sql.NullString) (User, error)
 	ListGenders(ctx context.Context) ([]Gender, error)
 	RecoverDeletedUser(ctx context.Context, id int64) (User, error)
 	UpdateUserEmail(ctx context.Context, arg UpdateUserEmailParams) (User, error)
 	UpdateUserInfo(ctx context.Context, arg UpdateUserInfoParams) (User, error)
 	UpdateUserPassword(ctx context.Context, arg UpdateUserPasswordParams) (User, error)
 	UpdateUserPhoneNumber(ctx context.Context, arg UpdateUserPhoneNumberParams) (User, error)
-	UpdateUserUsername(ctx context.Context, arg UpdateUserUsernameParams) (User, error)
 }
 
 var _ Querier = (*Queries)(nil)

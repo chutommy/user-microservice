@@ -14,7 +14,6 @@ type Gender struct {
 
 type User struct {
 	ID             int64          `json:"id"`
-	Username       sql.NullString `json:"username"`
 	HashedPassword string         `json:"hashed_password"`
 	FirstName      string         `json:"first_name"`
 	LastName       string         `json:"last_name"`

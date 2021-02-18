@@ -1,6 +1,6 @@
 -- name: CreateUser :one
-insert into users (username, hashed_password, first_name, last_name, birth_day, gender, email, phone_number)
-values ($1, $2, $3, $4, $5, $6, $7, $8)
+insert into users (hashed_password, first_name, last_name, birth_day, gender, email, phone_number)
+values ($1, $2, $3, $4, $5, $6, $7)
 returning *;
 
 -- name: GetUserByID :one
@@ -10,26 +10,12 @@ where id = $1
   and deleted_at IS NULL
 limit 1;
 
--- name: GetUserByUsername :one
-select *
-from users
-where username = $1
-  and deleted_at IS NULL
-limit 1;
-
 -- name: GetUserByEmail :one
 select *
 from users
 where email = $1
   and deleted_at IS NULL
 limit 1;
-
--- name: UpdateUserUsername :one
-update users
-set username = $2
-where id = $1
-  and deleted_at IS NULL
-returning *;
 
 -- name: UpdateUserEmail :one
 update users

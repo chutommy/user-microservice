@@ -7,7 +7,6 @@ create table if not exists genders
 create table if not exists users
 (
     id              bigserial primary key,
-    username        varchar(64),
     hashed_password varchar     not null,
     first_name      varchar(64) not null,
     last_name       varchar(64) not null,

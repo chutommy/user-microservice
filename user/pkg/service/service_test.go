@@ -280,11 +280,7 @@ func TestBasicUserService_CreateUser(t *testing.T) {
 	require.NoError(t, err)
 
 	user := repo.User{
-		ID: util.RandomInt(0, 1024),
-		Username: sql.NullString{
-			String: util.RandomString(),
-			Valid:  true,
-		},
+		ID:             util.RandomInt(0, 1024),
 		HashedPassword: hashedPassword,
 		FirstName:      util.RandomShortString(),
 		LastName:       util.RandomLongString(),
@@ -304,7 +300,6 @@ func TestBasicUserService_CreateUser(t *testing.T) {
 	}
 
 	type inp struct {
-		username    string
 		password    string
 		firstName   string
 		lastName    string
@@ -329,7 +324,6 @@ func TestBasicUserService_CreateUser(t *testing.T) {
 			name: "OK",
 			buildStub: func(q *mocks.Querier) {
 				q.On("CreateUser", mock.Anything, repo.CreateUserParams{
-					Username:       user.Username,
 					HashedPassword: user.HashedPassword,
 					FirstName:      user.FirstName,
 					LastName:       user.LastName,
@@ -340,7 +334,6 @@ func TestBasicUserService_CreateUser(t *testing.T) {
 				}, nil).Return(user, nil)
 			},
 			inp: inp{
-				username:    user.Username.String,
 				password:    password,
 				firstName:   user.FirstName,
 				lastName:    user.LastName,
@@ -358,7 +351,6 @@ func TestBasicUserService_CreateUser(t *testing.T) {
 			name: "EmptyPassword",
 			buildStub: func(q *mocks.Querier) {
 				q.On("CreateUser", mock.Anything, repo.CreateUserParams{
-					Username:       user.Username,
 					HashedPassword: "",
 					FirstName:      user.FirstName,
 					LastName:       user.LastName,
@@ -369,7 +361,6 @@ func TestBasicUserService_CreateUser(t *testing.T) {
 				}, nil).Return(repo.Gender{}, service.ErrEmptyPassword)
 			},
 			inp: inp{
-				username:    user.Username.String,
 				password:    "",
 				firstName:   user.FirstName,
 				lastName:    user.LastName,
@@ -392,7 +383,7 @@ func TestBasicUserService_CreateUser(t *testing.T) {
 			svc := service.NewBasicUserService(mockRepo)
 
 			// serve
-			u, err := svc.CreateUser(context.Background(), test.inp.username, test.inp.password, test.inp.firstName, test.inp.lastName, test.inp.gender, test.inp.email, test.inp.phoneNumber, test.inp.birthday)
+			u, err := svc.CreateUser(context.Background(), test.inp.password, test.inp.firstName, test.inp.lastName, test.inp.gender, test.inp.email, test.inp.phoneNumber, test.inp.birthday)
 			require.True(t, errors.Is(err, test.exp.err))
 			require.Equal(t, test.exp.user, u)
 
@@ -402,18 +393,6 @@ func TestBasicUserService_CreateUser(t *testing.T) {
 }
 
 func TestBasicUserService_GetUserByID(t *testing.T) {
-	tests := []struct {
-		name string
-	}{
-		// TODO: test cases
-	}
-	for _, test := range tests {
-		t.Run(test.name, func(t *testing.T) {
-
-		})
-	}
-}
-func TestBasicUserService_GetUserByUsername(t *testing.T) {
 	tests := []struct {
 		name string
 	}{
@@ -438,18 +417,6 @@ func TestBasicUserService_GetUserByEmail(t *testing.T) {
 	}
 }
 
-func TestBasicUserService_UpdateUserUsername(t *testing.T) {
-	tests := []struct {
-		name string
-	}{
-		// TODO: test cases
-	}
-	for _, test := range tests {
-		t.Run(test.name, func(t *testing.T) {
-
-		})
-	}
-}
 func TestBasicUserService_UpdateUserEmail(t *testing.T) {
 	tests := []struct {
 		name string
