@@ -13,7 +13,7 @@ create table if not exists users
     last_name       varchar(64) not null,
     birth_day       date,
     gender          smallint,
-    email           varchar(64) not null,
+    email           varchar(64) not null unique,
     phone_number    varchar(32),
     updated_at      timestamptz,
     deleted_at      timestamptz,
