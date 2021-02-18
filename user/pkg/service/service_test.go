@@ -492,17 +492,78 @@ func TestBasicUserService_CreateUser(t *testing.T) {
 }
 
 func TestBasicUserService_GetUserByID(t *testing.T) {
+	u := repo.User{
+		ID:             util.RandomInt(0, 1024),
+		HashedPassword: util.RandomPassword(),
+		FirstName:      util.RandomShortString(),
+		LastName:       util.RandomLongString(),
+		Gender:         int16(util.RandomInt(0, 16)),
+		Email:          util.RandomEmail(),
+		CreatedAt:      time.Now().AddDate(0, -1, 0),
+	}
+
 	tests := []struct {
-		name string
+		name      string
+		buildStub func(querier *mocks.Querier)
+		inpID     int64
+		expUser   repo.User
+		expErr    error
 	}{
-		// TODO: test cases
+		{
+			name: "OK",
+			buildStub: func(q *mocks.Querier) {
+				q.On("GetUserByID", mock.Anything, u.ID).
+					Return(u, nil)
+			},
+			inpID:   u.ID,
+			expUser: u,
+			expErr:  nil,
+		},
+		{
+			name:      "EmptyID",
+			buildStub: func(q *mocks.Querier) {},
+			inpID:     0,
+			expUser:   repo.User{},
+			expErr:    service.ErrEmptyID,
+		},
+		{
+			name: "NotFound",
+			buildStub: func(q *mocks.Querier) {
+				q.On("GetUserByID", mock.Anything, u.ID).
+					Return(repo.User{}, sql.ErrNoRows)
+			},
+			inpID:   u.ID,
+			expUser: repo.User{},
+			expErr:  service.ErrNotFound,
+		},
+		{
+			name: "InternalError",
+			buildStub: func(q *mocks.Querier) {
+				q.On("GetUserByID", mock.Anything, u.ID).
+					Return(repo.User{}, sql.ErrConnDone)
+			},
+			inpID:   u.ID,
+			expUser: repo.User{},
+			expErr:  service.ErrInternalDBError,
+		},
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
+			// build service
+			mockRepo := new(mocks.Querier)
+			test.buildStub(mockRepo)
+			svc := service.NewBasicUserService(mockRepo)
 
+			// serve
+			u, err := svc.GetUserByID(context.Background(), test.inpID)
+			require.True(t, errors.Is(err, test.expErr))
+			require.Equal(t, test.expUser, u)
+
+			mockRepo.AssertExpectations(t)
 		})
 	}
 }
+
 func TestBasicUserService_GetUserByEmail(t *testing.T) {
 	tests := []struct {
 		name string
