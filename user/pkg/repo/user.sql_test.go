@@ -112,40 +112,6 @@ func TestQueries_UpdateUserEmail(t *testing.T) {
 	require.NotEqual(t, u1.UpdatedAt, u2.UpdatedAt) // was updated
 }
 
-func TestQueries_UpdateUserPhoneNumber(t *testing.T) {
-	u1 := createRandomUser(t)
-
-	param := repo.UpdateUserPhoneNumberParams{
-		ID: u1.ID,
-		PhoneNumber: sql.NullString{
-			String: util.RandomPhoneNumber(),
-			Valid:  true,
-		},
-	}
-
-	u2, err := testQueries.UpdateUserPhoneNumber(context.Background(), param)
-	require.NoError(t, err)
-	require.NotEmpty(t, u2)
-
-	u3, err := testQueries.GetUserByID(context.Background(), u1.ID)
-	require.NoError(t, err)
-	require.NotEmpty(t, u3)
-
-	// check values
-	require.True(t, reflect.DeepEqual(u2, u3))
-	require.Equal(t, u1.ID, u2.ID)
-	require.Equal(t, u1.HashedPassword, u2.HashedPassword)
-	require.Equal(t, u1.FirstName, u2.FirstName)
-	require.Equal(t, u1.LastName, u2.LastName)
-	require.Equal(t, u1.BirthDay, u2.BirthDay)
-	require.Equal(t, u1.Gender, u2.Gender)
-	require.Equal(t, u1.Email, u2.Email)
-	require.Equal(t, param.PhoneNumber, u2.PhoneNumber)
-	require.Equal(t, u1.DeletedAt, u2.DeletedAt)
-	require.Equal(t, u1.CreatedAt, u2.CreatedAt)
-	require.NotEqual(t, u1.UpdatedAt, u2.UpdatedAt) // was updated
-}
-
 func TestQueries_UpdateUserPassword(t *testing.T) {
 	u1 := createRandomUser(t)
 
@@ -181,42 +147,35 @@ func TestQueries_UpdateUserInfo(t *testing.T) {
 	u0 := createRandomUser(t)
 	u1 := createRandomUser(t)
 
-	// get date
-	now := time.Now()
-	today := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, &time.Location{})
-
 	param := repo.UpdateUserInfoParams{
-		ID:        u1.ID,
-		FirstName: util.RandomShortString(),
-		LastName:  util.RandomLongString(),
-		BirthDay: sql.NullTime{
-			Time:  today.AddDate(-18, 0, 0),
-			Valid: true,
-		},
-		Gender: u0.Gender,
+		ID:          u0.ID,
+		FirstName:   u1.FirstName,
+		LastName:    u1.LastName,
+		BirthDay:    u1.BirthDay,
+		Gender:      u1.Gender,
+		PhoneNumber: u1.PhoneNumber,
 	}
 
 	u2, err := testQueries.UpdateUserInfo(context.Background(), param)
 	require.NoError(t, err)
 	require.NotEmpty(t, u2)
 
-	u3, err := testQueries.GetUserByID(context.Background(), u1.ID)
+	u3, err := testQueries.GetUserByID(context.Background(), u0.ID)
 	require.NoError(t, err)
 	require.NotEmpty(t, u3)
 
 	// check values
 	require.True(t, reflect.DeepEqual(u2, u3))
-	require.Equal(t, u1.ID, u2.ID)
-	require.Equal(t, u1.HashedPassword, u2.HashedPassword)
-	require.Equal(t, param.FirstName, u2.FirstName)
-	require.Equal(t, param.LastName, u2.LastName)
-	require.True(t, param.BirthDay.Time.Equal(u2.BirthDay.Time)) // same birthday
-	require.Equal(t, param.Gender, u2.Gender)
-	require.Equal(t, u1.Email, u2.Email)
+	require.Equal(t, u0.ID, u2.ID)
+	require.Equal(t, u1.FirstName, u2.FirstName)
+	require.Equal(t, u1.LastName, u2.LastName)
+	require.True(t, u1.BirthDay.Time.Equal(u2.BirthDay.Time)) // same birthday
+	require.Equal(t, u1.Gender, u2.Gender)
 	require.Equal(t, u1.PhoneNumber, u2.PhoneNumber)
-	require.Equal(t, u1.DeletedAt, u2.DeletedAt)
-	require.Equal(t, u1.CreatedAt, u2.CreatedAt)
-	require.NotEqual(t, u1.UpdatedAt, u2.UpdatedAt) // was updated
+
+	require.Equal(t, u0.DeletedAt, u2.DeletedAt)
+	require.Equal(t, u0.CreatedAt, u2.CreatedAt)
+	require.NotEqual(t, u0.UpdatedAt, u2.UpdatedAt) // was updated
 }
 
 func TestQueries_DeleteUserSoft(t *testing.T) {
@@ -233,7 +192,7 @@ func TestQueries_DeleteUserSoft(t *testing.T) {
 	require.Empty(t, u2)
 
 	// recover
-	u3, err := testQueries.RecoverDeletedUser(context.Background(), u1.ID)
+	u3, err := testQueries.RecoverUser(context.Background(), u1.ID)
 	require.NoError(t, err)
 	require.NotEmpty(t, u3)
 
@@ -265,7 +224,7 @@ func TestQueries_DeleteUserPermanent(t *testing.T) {
 	require.Empty(t, u2)
 
 	// try to recover
-	u3, err := testQueries.RecoverDeletedUser(context.Background(), u1.ID)
+	u3, err := testQueries.RecoverUser(context.Background(), u1.ID)
 	require.Error(t, err)
 	require.EqualError(t, sql.ErrNoRows, err.Error())
 	require.Empty(t, u3)

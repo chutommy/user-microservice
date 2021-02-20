@@ -1,37 +1,37 @@
--- name: createuser :one
+-- name: CreateUser :one
 insert into users (email, hashed_password, first_name, last_name, birth_day, gender, phone_number)
 values ($1, $2, $3, $4, $5, $6, $7)
 returning *;
 
--- name: getuserbyid :one
+-- name: GetUserByID :one
 select *
 from users
 where id = $1
   and deleted_at is null
 limit 1;
 
--- name: getuserbyemail :one
+-- name: GetUserByEmail :one
 select *
 from users
 where email = $1
   and deleted_at is null
 limit 1;
 
--- name: updateuseremail :one
+-- name: UpdateUserEmail :one
 update users
 set email = $2
 where id = $1
   and deleted_at is null
 returning *;
 
--- name: updateuserpassword :one
+-- name: UpdateUserPassword :one
 update users
 set hashed_password = $2
 where id = $1
   and deleted_at is null
 returning *;
 
--- name: updateuserinfo :one
+-- name: UpdateUserInfo :one
 update users
 set first_name   = $2,
     last_name    = $3,
@@ -42,26 +42,26 @@ where id = $1
   and deleted_at is null
 returning *;
 
--- name: deleteusersoft :exec
+-- name: DeleteUserSoft :exec
 update users
 set deleted_at = now()
 where id = $1
   and deleted_at is null;
 
--- name: recoverdeleteduser :one
+-- name: RecoverUser :one
 update users
 set deleted_at = null
 where id = $1
   and deleted_at is not null
 returning *;
 
--- name: deleteuserpermanent :exec
+-- name: DeleteUserPermanent :exec
 delete
 from users
 where id = $1
   and deleted_at is null;
 
--- name: gethashedpassword :one
+-- name: GetHashedPassword :one
 select hashed_password
 from users
 where id = $1
