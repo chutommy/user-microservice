@@ -35,61 +35,12 @@ func (_m *Querier) CreateGender(ctx context.Context, title string) (repo.Gender,
 	return r0, r1
 }
 
-// CreateUser provides a mock function with given fields: ctx, arg
-func (_m *Querier) CreateUser(ctx context.Context, arg repo.CreateUserParams) (repo.User, error) {
-	ret := _m.Called(ctx, arg)
-
-	var r0 repo.User
-	if rf, ok := ret.Get(0).(func(context.Context, repo.CreateUserParams) repo.User); ok {
-		r0 = rf(ctx, arg)
-	} else {
-		r0 = ret.Get(0).(repo.User)
-	}
-
-	var r1 error
-	if rf, ok := ret.Get(1).(func(context.Context, repo.CreateUserParams) error); ok {
-		r1 = rf(ctx, arg)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
-}
-
 // DeleteGender provides a mock function with given fields: ctx, id
 func (_m *Querier) DeleteGender(ctx context.Context, id int16) error {
 	ret := _m.Called(ctx, id)
 
 	var r0 error
 	if rf, ok := ret.Get(0).(func(context.Context, int16) error); ok {
-		r0 = rf(ctx, id)
-	} else {
-		r0 = ret.Error(0)
-	}
-
-	return r0
-}
-
-// DeleteUserPermanent provides a mock function with given fields: ctx, id
-func (_m *Querier) DeleteUserPermanent(ctx context.Context, id int64) error {
-	ret := _m.Called(ctx, id)
-
-	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, int64) error); ok {
-		r0 = rf(ctx, id)
-	} else {
-		r0 = ret.Error(0)
-	}
-
-	return r0
-}
-
-// DeleteUserSoft provides a mock function with given fields: ctx, id
-func (_m *Querier) DeleteUserSoft(ctx context.Context, id int64) error {
-	ret := _m.Called(ctx, id)
-
-	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, int64) error); ok {
 		r0 = rf(ctx, id)
 	} else {
 		r0 = ret.Error(0)
@@ -111,69 +62,6 @@ func (_m *Querier) GetGender(ctx context.Context, id int16) (repo.Gender, error)
 
 	var r1 error
 	if rf, ok := ret.Get(1).(func(context.Context, int16) error); ok {
-		r1 = rf(ctx, id)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
-}
-
-// GetHashedPassword provides a mock function with given fields: ctx, id
-func (_m *Querier) GetHashedPassword(ctx context.Context, id int64) (string, error) {
-	ret := _m.Called(ctx, id)
-
-	var r0 string
-	if rf, ok := ret.Get(0).(func(context.Context, int64) string); ok {
-		r0 = rf(ctx, id)
-	} else {
-		r0 = ret.Get(0).(string)
-	}
-
-	var r1 error
-	if rf, ok := ret.Get(1).(func(context.Context, int64) error); ok {
-		r1 = rf(ctx, id)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
-}
-
-// GetUserByEmail provides a mock function with given fields: ctx, email
-func (_m *Querier) GetUserByEmail(ctx context.Context, email string) (repo.User, error) {
-	ret := _m.Called(ctx, email)
-
-	var r0 repo.User
-	if rf, ok := ret.Get(0).(func(context.Context, string) repo.User); ok {
-		r0 = rf(ctx, email)
-	} else {
-		r0 = ret.Get(0).(repo.User)
-	}
-
-	var r1 error
-	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
-		r1 = rf(ctx, email)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
-}
-
-// GetUserByID provides a mock function with given fields: ctx, id
-func (_m *Querier) GetUserByID(ctx context.Context, id int64) (repo.User, error) {
-	ret := _m.Called(ctx, id)
-
-	var r0 repo.User
-	if rf, ok := ret.Get(0).(func(context.Context, int64) repo.User); ok {
-		r0 = rf(ctx, id)
-	} else {
-		r0 = ret.Get(0).(repo.User)
-	}
-
-	var r1 error
-	if rf, ok := ret.Get(1).(func(context.Context, int64) error); ok {
 		r1 = rf(ctx, id)
 	} else {
 		r1 = ret.Error(1)
@@ -205,8 +93,99 @@ func (_m *Querier) ListGenders(ctx context.Context) ([]repo.Gender, error) {
 	return r0, r1
 }
 
-// RecoverDeletedUser provides a mock function with given fields: ctx, id
-func (_m *Querier) RecoverDeletedUser(ctx context.Context, id int64) (repo.User, error) {
+// createuser provides a mock function with given fields: ctx, arg
+func (_m *Querier) createuser(ctx context.Context, arg repo.createuserParams) (repo.User, error) {
+	ret := _m.Called(ctx, arg)
+
+	var r0 repo.User
+	if rf, ok := ret.Get(0).(func(context.Context, repo.createuserParams) repo.User); ok {
+		r0 = rf(ctx, arg)
+	} else {
+		r0 = ret.Get(0).(repo.User)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, repo.createuserParams) error); ok {
+		r1 = rf(ctx, arg)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// deleteuserpermanent provides a mock function with given fields: ctx, id
+func (_m *Querier) deleteuserpermanent(ctx context.Context, id int64) error {
+	ret := _m.Called(ctx, id)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, int64) error); ok {
+		r0 = rf(ctx, id)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// deleteusersoft provides a mock function with given fields: ctx, id
+func (_m *Querier) deleteusersoft(ctx context.Context, id int64) error {
+	ret := _m.Called(ctx, id)
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, int64) error); ok {
+		r0 = rf(ctx, id)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// gethashedpassword provides a mock function with given fields: ctx, id
+func (_m *Querier) gethashedpassword(ctx context.Context, id int64) (string, error) {
+	ret := _m.Called(ctx, id)
+
+	var r0 string
+	if rf, ok := ret.Get(0).(func(context.Context, int64) string); ok {
+		r0 = rf(ctx, id)
+	} else {
+		r0 = ret.Get(0).(string)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, int64) error); ok {
+		r1 = rf(ctx, id)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// getuserbyemail provides a mock function with given fields: ctx, email
+func (_m *Querier) getuserbyemail(ctx context.Context, email string) (repo.User, error) {
+	ret := _m.Called(ctx, email)
+
+	var r0 repo.User
+	if rf, ok := ret.Get(0).(func(context.Context, string) repo.User); ok {
+		r0 = rf(ctx, email)
+	} else {
+		r0 = ret.Get(0).(repo.User)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
+		r1 = rf(ctx, email)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// getuserbyid provides a mock function with given fields: ctx, id
+func (_m *Querier) getuserbyid(ctx context.Context, id int64) (repo.User, error) {
 	ret := _m.Called(ctx, id)
 
 	var r0 repo.User
@@ -226,19 +205,40 @@ func (_m *Querier) RecoverDeletedUser(ctx context.Context, id int64) (repo.User,
 	return r0, r1
 }
 
-// UpdateUserEmail provides a mock function with given fields: ctx, arg
-func (_m *Querier) UpdateUserEmail(ctx context.Context, arg repo.UpdateUserEmailParams) (repo.User, error) {
+// recoverdeleteduser provides a mock function with given fields: ctx, id
+func (_m *Querier) recoverdeleteduser(ctx context.Context, id int64) (repo.User, error) {
+	ret := _m.Called(ctx, id)
+
+	var r0 repo.User
+	if rf, ok := ret.Get(0).(func(context.Context, int64) repo.User); ok {
+		r0 = rf(ctx, id)
+	} else {
+		r0 = ret.Get(0).(repo.User)
+	}
+
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, int64) error); ok {
+		r1 = rf(ctx, id)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// updateuseremail provides a mock function with given fields: ctx, arg
+func (_m *Querier) updateuseremail(ctx context.Context, arg repo.updateuseremailParams) (repo.User, error) {
 	ret := _m.Called(ctx, arg)
 
 	var r0 repo.User
-	if rf, ok := ret.Get(0).(func(context.Context, repo.UpdateUserEmailParams) repo.User); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, repo.updateuseremailParams) repo.User); ok {
 		r0 = rf(ctx, arg)
 	} else {
 		r0 = ret.Get(0).(repo.User)
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(context.Context, repo.UpdateUserEmailParams) error); ok {
+	if rf, ok := ret.Get(1).(func(context.Context, repo.updateuseremailParams) error); ok {
 		r1 = rf(ctx, arg)
 	} else {
 		r1 = ret.Error(1)
@@ -247,19 +247,19 @@ func (_m *Querier) UpdateUserEmail(ctx context.Context, arg repo.UpdateUserEmail
 	return r0, r1
 }
 
-// UpdateUserInfo provides a mock function with given fields: ctx, arg
-func (_m *Querier) UpdateUserInfo(ctx context.Context, arg repo.UpdateUserInfoParams) (repo.User, error) {
+// updateuserinfo provides a mock function with given fields: ctx, arg
+func (_m *Querier) updateuserinfo(ctx context.Context, arg repo.updateuserinfoParams) (repo.User, error) {
 	ret := _m.Called(ctx, arg)
 
 	var r0 repo.User
-	if rf, ok := ret.Get(0).(func(context.Context, repo.UpdateUserInfoParams) repo.User); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, repo.updateuserinfoParams) repo.User); ok {
 		r0 = rf(ctx, arg)
 	} else {
 		r0 = ret.Get(0).(repo.User)
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(context.Context, repo.UpdateUserInfoParams) error); ok {
+	if rf, ok := ret.Get(1).(func(context.Context, repo.updateuserinfoParams) error); ok {
 		r1 = rf(ctx, arg)
 	} else {
 		r1 = ret.Error(1)
@@ -268,40 +268,19 @@ func (_m *Querier) UpdateUserInfo(ctx context.Context, arg repo.UpdateUserInfoPa
 	return r0, r1
 }
 
-// UpdateUserPassword provides a mock function with given fields: ctx, arg
-func (_m *Querier) UpdateUserPassword(ctx context.Context, arg repo.UpdateUserPasswordParams) (repo.User, error) {
+// updateuserpassword provides a mock function with given fields: ctx, arg
+func (_m *Querier) updateuserpassword(ctx context.Context, arg repo.updateuserpasswordParams) (repo.User, error) {
 	ret := _m.Called(ctx, arg)
 
 	var r0 repo.User
-	if rf, ok := ret.Get(0).(func(context.Context, repo.UpdateUserPasswordParams) repo.User); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, repo.updateuserpasswordParams) repo.User); ok {
 		r0 = rf(ctx, arg)
 	} else {
 		r0 = ret.Get(0).(repo.User)
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(context.Context, repo.UpdateUserPasswordParams) error); ok {
-		r1 = rf(ctx, arg)
-	} else {
-		r1 = ret.Error(1)
-	}
-
-	return r0, r1
-}
-
-// UpdateUserPhoneNumber provides a mock function with given fields: ctx, arg
-func (_m *Querier) UpdateUserPhoneNumber(ctx context.Context, arg repo.UpdateUserPhoneNumberParams) (repo.User, error) {
-	ret := _m.Called(ctx, arg)
-
-	var r0 repo.User
-	if rf, ok := ret.Get(0).(func(context.Context, repo.UpdateUserPhoneNumberParams) repo.User); ok {
-		r0 = rf(ctx, arg)
-	} else {
-		r0 = ret.Get(0).(repo.User)
-	}
-
-	var r1 error
-	if rf, ok := ret.Get(1).(func(context.Context, repo.UpdateUserPhoneNumberParams) error); ok {
+	if rf, ok := ret.Get(1).(func(context.Context, repo.updateuserpasswordParams) error); ok {
 		r1 = rf(ctx, arg)
 	} else {
 		r1 = ret.Error(1)
