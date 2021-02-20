@@ -1,5 +1,5 @@
 -- name: CreateUser :one
-insert into users (hashed_password, first_name, last_name, birth_day, gender, email, phone_number)
+insert into users (email, hashed_password, first_name, last_name, birth_day, gender, phone_number)
 values ($1, $2, $3, $4, $5, $6, $7)
 returning *;
 
@@ -24,13 +24,6 @@ where id = $1
   and deleted_at IS NULL
 returning *;
 
--- name: UpdateUserPhoneNumber :one
-update users
-set phone_number = $2
-where id = $1
-  and deleted_at IS NULL
-returning *;
-
 -- name: UpdateUserPassword :one
 update users
 set hashed_password = $2
@@ -40,10 +33,11 @@ returning *;
 
 -- name: UpdateUserInfo :one
 update users
-set first_name = $2,
-    last_name  = $3,
-    birth_day  = $4,
-    gender     = $5
+set first_name   = $2,
+    last_name    = $3,
+    birth_day    = $4,
+    gender       = $5,
+    phone_number = $6
 where id = $1
   and deleted_at IS NULL
 returning *;
