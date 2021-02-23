@@ -78,6 +78,7 @@ func (b *basicUserService) AddGender(ctx context.Context, title string) (repo.Ge
 
 	return g, err
 }
+
 func (b *basicUserService) GetGender(ctx context.Context, id int16) (repo.Gender, error) {
 	if id == 0 {
 		return repo.Gender{}, fmt.Errorf("%w: missing 'id'", ErrMissingRequestField)
@@ -111,6 +112,7 @@ func (b *basicUserService) ListGenders(ctx context.Context) ([]repo.Gender, erro
 
 	return gs, nil
 }
+
 func (b *basicUserService) RemoveGender(ctx context.Context, id int16) error {
 	if id == 0 {
 		return fmt.Errorf("%w: missing 'id'", ErrMissingRequestField)
@@ -143,12 +145,14 @@ func (b *basicUserService) CreateUser(ctx context.Context, user repo.User) (repo
 		return repo.User{}, fmt.Errorf("%w: missing 'gender'", ErrMissingRequestField)
 	}
 
+	// hash password
 	bp, err := bcrypt.GenerateFromPassword([]byte(user.HashedPassword), bcrypt.DefaultCost)
 	if err != nil {
 		return repo.User{}, multierr.Append(ErrInternalServerError, ErrPasswordHashing)
 	}
 	user.HashedPassword = string(bp)
 
+	// create
 	newUser, err := b.repo.CreateUser(ctx, repo.CreateUserParams{
 		Email:          user.Email,
 		HashedPassword: user.HashedPassword,
@@ -175,11 +179,13 @@ func (b *basicUserService) CreateUser(ctx context.Context, user repo.User) (repo
 
 	return newUser, nil
 }
+
 func (b *basicUserService) GetUserByID(ctx context.Context, id int64) (repo.User, error) {
 	if id == 0 {
 		return repo.User{}, fmt.Errorf("%w: missing 'id'", ErrMissingRequestField)
 	}
 
+	// retrieve
 	u, err := b.repo.GetUserByID(ctx, id)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -191,11 +197,13 @@ func (b *basicUserService) GetUserByID(ctx context.Context, id int64) (repo.User
 
 	return u, nil
 }
+
 func (b *basicUserService) GetUserByEmail(ctx context.Context, email string) (repo.User, error) {
 	if email == "" {
 		return repo.User{}, fmt.Errorf("%w: missing 'email'", ErrMissingRequestField)
 	}
 
+	// retrieve
 	u, err := b.repo.GetUserByEmail(ctx, email)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -207,6 +215,7 @@ func (b *basicUserService) GetUserByEmail(ctx context.Context, email string) (re
 
 	return u, nil
 }
+
 func (b *basicUserService) UpdateUserEmail(ctx context.Context, id int64, email string) (repo.User, error) {
 	switch {
 	case id == 0:
@@ -215,6 +224,7 @@ func (b *basicUserService) UpdateUserEmail(ctx context.Context, id int64, email 
 		return repo.User{}, fmt.Errorf("%w: missing 'email'", ErrMissingRequestField)
 	}
 
+	// update
 	u, err := b.repo.UpdateUserEmail(ctx, repo.UpdateUserEmailParams{
 		ID:    id,
 		Email: email,
@@ -249,12 +259,14 @@ func (b *basicUserService) UpdateUserPassword(ctx context.Context, id int64, pas
 		return repo.User{}, fmt.Errorf("%w: missing 'password'", ErrMissingRequestField)
 	}
 
+	// hash password
 	bp, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		return repo.User{}, multierr.Append(ErrInternalServerError, ErrPasswordHashing)
 	}
 	hashedPassword := string(bp)
 
+	// update
 	u, err := b.repo.UpdateUserPassword(ctx, repo.UpdateUserPasswordParams{
 		ID:             id,
 		HashedPassword: hashedPassword,
@@ -287,6 +299,7 @@ func (b *basicUserService) UpdateUserInfo(ctx context.Context, id int64, user re
 		return repo.User{}, fmt.Errorf("%w: missing 'id'", ErrMissingRequestField)
 	}
 
+	// update
 	u, err := b.repo.UpdateUserInfo(ctx, repo.UpdateUserInfoParams{
 		ID:          id,
 		FirstName:   user.FirstName,
@@ -314,6 +327,7 @@ func (b *basicUserService) DeleteUserSoft(ctx context.Context, id int64) error {
 		return fmt.Errorf("%w: missing 'id'", ErrMissingRequestField)
 	}
 
+	// delete
 	err := b.repo.DeleteUserSoft(ctx, id)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -328,11 +342,13 @@ func (b *basicUserService) DeleteUserSoft(ctx context.Context, id int64) error {
 
 	return nil
 }
+
 func (b *basicUserService) RecoverUser(ctx context.Context, id int64) (repo.User, error) {
 	if id == 0 {
 		return repo.User{}, fmt.Errorf("%w: missing 'id'", ErrMissingRequestField)
 	}
 
+	// recover
 	u, err := b.repo.RecoverUser(ctx, id)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -353,6 +369,7 @@ func (b *basicUserService) DeleteUserPermanent(ctx context.Context, id int64) er
 		return fmt.Errorf("%w: missing 'id'", ErrMissingRequestField)
 	}
 
+	// delete
 	err := b.repo.DeleteUserPermanent(ctx, id)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -376,6 +393,7 @@ func (b *basicUserService) VerifyPassword(ctx context.Context, id int64, passwor
 		return fmt.Errorf("%w: missing 'password'", ErrMissingRequestField)
 	}
 
+	// compare
 	hashedPassword, err := b.repo.GetHashedPassword(ctx, id)
 	if err != nil {
 		if err == sql.ErrNoRows {
