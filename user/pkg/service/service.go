@@ -199,7 +199,7 @@ func (b *basicUserService) GetUserByEmail(ctx context.Context, email string) (re
 	u, err := b.repo.GetUserByEmail(ctx, email)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return repo.User{}, fmt.Errorf("%w: no user with 'email': %d", ErrNotFound, email)
+			return repo.User{}, fmt.Errorf("%w: no user with 'email': %s", ErrNotFound, email)
 		}
 
 		return repo.User{}, multierr.Append(ErrInternalServerError, err)
