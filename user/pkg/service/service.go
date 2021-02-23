@@ -72,17 +72,55 @@ func (b *basicUserService) AddGender(ctx context.Context, title string) (repo.Ge
 
 	return g, err
 }
-func (b *basicUserService) GetGender(ctx context.Context, id int16) (r0 repo.Gender, e1 error) {
-	// TODO implement the business logic of GetGender
-	return r0, e1
+func (b *basicUserService) GetGender(ctx context.Context, id int16) (repo.Gender, error) {
+	if id == 0 {
+		return repo.Gender{}, fmt.Errorf("%w: missing 'id'", ErrMissingRequestField)
+	}
+
+	// retrieve
+	g, err := b.repo.GetGender(ctx, id)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return repo.Gender{}, fmt.Errorf("%w: no gender with id '%d'", ErrNotFound, id)
+		}
+
+		return repo.Gender{}, multierr.Append(
+			ErrInternalDBError,
+			fmt.Errorf("failed to retrieve gender: %w", err),
+		)
+	}
+
+	return g, nil
 }
-func (b *basicUserService) ListGenders(ctx context.Context) (r0 []repo.Gender, e1 error) {
-	// TODO implement the business logic of ListGenders
-	return r0, e1
+
+func (b *basicUserService) ListGenders(ctx context.Context) ([]repo.Gender, error) {
+	// retrieve
+	gs, err := b.repo.ListGenders(ctx)
+	if err != nil {
+		return []repo.Gender{}, multierr.Append(
+			ErrInternalDBError,
+			fmt.Errorf("failed to retrieve genders: %w", err),
+		)
+	}
+
+	return gs, nil
 }
-func (b *basicUserService) RemoveGender(ctx context.Context, id int16) (e0 error) {
-	// TODO implement the business logic of RemoveGender
-	return e0
+func (b *basicUserService) RemoveGender(ctx context.Context, id int16) error {
+	if id == 0 {
+		return fmt.Errorf("%w: missing 'id'", ErrMissingRequestField)
+	}
+
+	// delete
+	err := b.repo.DeleteGender(ctx, id)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return fmt.Errorf("%w: no gender with id '%d'", ErrNotFound, id)
+		}
+
+		return multierr.Append(ErrInternalDBError, fmt.Errorf("failed to delte gender: %w", err))
+	}
+
+	return nil
 }
 func (b *basicUserService) CreateUser(ctx context.Context, user repo.User) (r0 repo.User, e1 error) {
 	// TODO implement the business logic of CreateUser
