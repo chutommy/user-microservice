@@ -12,7 +12,7 @@ create table if not exists users
     first_name      varchar(64) not null,
     last_name       varchar(64) not null,
     birth_day       date,
-    gender          smallint,
+    gender          smallint    not null,
     phone_number    varchar(32),
     updated_at      timestamptz,
     deleted_at      timestamptz,
