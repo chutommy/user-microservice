@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"fmt"
 
@@ -43,13 +44,16 @@ var (
 	ErrMissingRequestField = errors.New("request are incomplete")
 	// ErrDuplicatedValue is returned whenever any duplication of a value that must be unique appears.
 	ErrDuplicatedValue = errors.New("given value is already in use")
+	// ErrNotFound is returned if searched value is not found.
+	ErrNotFound = errors.New("record not found")
 )
 
 func (b *basicUserService) AddGender(ctx context.Context, title string) (repo.Gender, error) {
 	if title == "" {
-		return repo.Gender{}, fmt.Errorf("%w: missing title", ErrMissingRequestField)
+		return repo.Gender{}, fmt.Errorf("%w: missing 'title'", ErrMissingRequestField)
 	}
 
+	// create
 	g, err := b.repo.CreateGender(ctx, title)
 	if err != nil {
 		var pqErr *pq.Error
@@ -58,12 +62,12 @@ func (b *basicUserService) AddGender(ctx context.Context, title string) (repo.Ge
 			case "23505":
 				return repo.Gender{}, fmt.Errorf("%w: duplicated 'title'", ErrDuplicatedValue)
 			}
-
-			return repo.Gender{}, multierr.Append(
-				ErrInternalDBError,
-				fmt.Errorf("failed to create gender: %w", err),
-			)
 		}
+
+		return repo.Gender{}, multierr.Append(
+			ErrInternalDBError,
+			fmt.Errorf("failed to create gender: %w", err),
+		)
 	}
 
 	return g, err
