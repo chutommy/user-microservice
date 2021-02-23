@@ -15,13 +15,13 @@ type Gender struct {
 type User struct {
 	ID             int64          `json:"id"`
 	Email          string         `json:"email"`
-	HashedPassword string         `json:"hashed_password"`
-	FirstName      string         `json:"first_name"`
-	LastName       string         `json:"last_name"`
-	BirthDay       sql.NullTime   `json:"birth_day"`
+	HashedPassword string         `json:"hashedPassword"`
+	FirstName      string         `json:"firstName"`
+	LastName       string         `json:"lastName"`
+	BirthDay       sql.NullTime   `json:"birthDay"`
 	Gender         int16          `json:"gender"`
-	PhoneNumber    sql.NullString `json:"phone_number"`
-	UpdatedAt      sql.NullTime   `json:"updated_at"`
-	DeletedAt      sql.NullTime   `json:"deleted_at"`
-	CreatedAt      time.Time      `json:"created_at"`
+	PhoneNumber    sql.NullString `json:"phoneNumber"`
+	UpdatedAt      sql.NullTime   `json:"updatedAt"`
+	DeletedAt      sql.NullTime   `json:"deletedAt"`
+	CreatedAt      time.Time      `json:"createdAt"`
 }

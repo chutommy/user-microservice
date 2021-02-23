@@ -16,12 +16,12 @@ returning id, email, hashed_password, first_name, last_name, birth_day, gender, 
 
 type CreateUserParams struct {
 	Email          string         `json:"email"`
-	HashedPassword string         `json:"hashed_password"`
-	FirstName      string         `json:"first_name"`
-	LastName       string         `json:"last_name"`
-	BirthDay       sql.NullTime   `json:"birth_day"`
+	HashedPassword string         `json:"hashedPassword"`
+	FirstName      string         `json:"firstName"`
+	LastName       string         `json:"lastName"`
+	BirthDay       sql.NullTime   `json:"birthDay"`
 	Gender         int16          `json:"gender"`
-	PhoneNumber    sql.NullString `json:"phone_number"`
+	PhoneNumber    sql.NullString `json:"phoneNumber"`
 }
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {
@@ -217,11 +217,11 @@ returning id, email, hashed_password, first_name, last_name, birth_day, gender, 
 
 type UpdateUserInfoParams struct {
 	ID          int64          `json:"id"`
-	FirstName   string         `json:"first_name"`
-	LastName    string         `json:"last_name"`
-	BirthDay    sql.NullTime   `json:"birth_day"`
+	FirstName   string         `json:"firstName"`
+	LastName    string         `json:"lastName"`
+	BirthDay    sql.NullTime   `json:"birthDay"`
 	Gender      int16          `json:"gender"`
-	PhoneNumber sql.NullString `json:"phone_number"`
+	PhoneNumber sql.NullString `json:"phoneNumber"`
 }
 
 func (q *Queries) UpdateUserInfo(ctx context.Context, arg UpdateUserInfoParams) (User, error) {
@@ -260,7 +260,7 @@ returning id, email, hashed_password, first_name, last_name, birth_day, gender, 
 
 type UpdateUserPasswordParams struct {
 	ID             int64  `json:"id"`
-	HashedPassword string `json:"hashed_password"`
+	HashedPassword string `json:"hashedPassword"`
 }
 
 func (q *Queries) UpdateUserPassword(ctx context.Context, arg UpdateUserPasswordParams) (User, error) {
