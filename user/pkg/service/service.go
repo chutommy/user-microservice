@@ -8,6 +8,7 @@ import (
 
 	"github.com/lib/pq"
 	"go.uber.org/multierr"
+	"golang.org/x/crypto/bcrypt"
 
 	"user/pkg/repo"
 )
@@ -38,8 +39,10 @@ type basicUserService struct {
 }
 
 var (
-	// ErrInternalDBError is returned if any unexpected database error occurs.
-	ErrInternalDBError = errors.New("internal database error")
+	// ErrPasswordHashing is returned whenever unexpected error is arisen from hashing passwords.
+	ErrPasswordHashing = errors.New("password hashing error")
+	// ErrInternalServerError is returned if any unexpected server error occurs.
+	ErrInternalServerError = errors.New("internal server error")
 	// ErrMissingRequestField is returned if any of the mandatory parameter field is left empty.
 	ErrMissingRequestField = errors.New("request are incomplete")
 	// ErrDuplicatedValue is returned whenever any duplication of a value that must be unique appears.
@@ -65,7 +68,7 @@ func (b *basicUserService) AddGender(ctx context.Context, title string) (repo.Ge
 		}
 
 		return repo.Gender{}, multierr.Append(
-			ErrInternalDBError,
+			ErrInternalServerError,
 			fmt.Errorf("failed to create gender: %w", err),
 		)
 	}
@@ -85,7 +88,7 @@ func (b *basicUserService) GetGender(ctx context.Context, id int16) (repo.Gender
 		}
 
 		return repo.Gender{}, multierr.Append(
-			ErrInternalDBError,
+			ErrInternalServerError,
 			fmt.Errorf("failed to retrieve gender: %w", err),
 		)
 	}
@@ -98,7 +101,7 @@ func (b *basicUserService) ListGenders(ctx context.Context) ([]repo.Gender, erro
 	gs, err := b.repo.ListGenders(ctx)
 	if err != nil {
 		return []repo.Gender{}, multierr.Append(
-			ErrInternalDBError,
+			ErrInternalServerError,
 			fmt.Errorf("failed to retrieve genders: %w", err),
 		)
 	}
@@ -117,7 +120,7 @@ func (b *basicUserService) RemoveGender(ctx context.Context, id int16) error {
 			return fmt.Errorf("%w: no gender with id '%d'", ErrNotFound, id)
 		}
 
-		return multierr.Append(ErrInternalDBError, fmt.Errorf("failed to delte gender: %w", err))
+		return multierr.Append(ErrInternalServerError, fmt.Errorf("failed to delte gender: %w", err))
 	}
 
 	return nil
