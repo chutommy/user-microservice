@@ -9,9 +9,14 @@ import (
 	"github.com/go-kit/kit/transport/http"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+	"go.uber.org/multierr"
 
 	"user/pkg/endpoint"
+	"user/pkg/service"
 )
+
+// ErrJSONDecode is returned jf invalid JSON is provided.
+var ErrJSONDecode = errors.New("could not decode JSON body")
 
 // makeAddGenderHandler creates the handler logic
 func makeAddGenderHandler(m *mux.Router, endpoints endpoint.Endpoints, options []http.ServerOption) {
@@ -31,6 +36,12 @@ func makeAddGenderHandler(m *mux.Router, endpoints endpoint.Endpoints, options [
 func decodeAddGenderRequest(_ context.Context, r *http1.Request) (interface{}, error) {
 	req := endpoint.AddGenderRequest{}
 	err := json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		err = multierr.Append(ErrJSONDecode, err)
+	}
+	if err != nil {
+		err = multierr.Append(ErrJSONDecode, err)
+	}
 	return req, err
 }
 
@@ -64,6 +75,9 @@ func makeGetGenderHandler(m *mux.Router, endpoints endpoint.Endpoints, options [
 func decodeGetGenderRequest(_ context.Context, r *http1.Request) (interface{}, error) {
 	req := endpoint.GetGenderRequest{}
 	err := json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		err = multierr.Append(ErrJSONDecode, err)
+	}
 	return req, err
 }
 
@@ -97,6 +111,9 @@ func makeListGendersHandler(m *mux.Router, endpoints endpoint.Endpoints, options
 func decodeListGendersRequest(_ context.Context, r *http1.Request) (interface{}, error) {
 	req := endpoint.ListGendersRequest{}
 	err := json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		err = multierr.Append(ErrJSONDecode, err)
+	}
 	return req, err
 }
 
@@ -130,6 +147,9 @@ func makeRemoveGenderHandler(m *mux.Router, endpoints endpoint.Endpoints, option
 func decodeRemoveGenderRequest(_ context.Context, r *http1.Request) (interface{}, error) {
 	req := endpoint.RemoveGenderRequest{}
 	err := json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		err = multierr.Append(ErrJSONDecode, err)
+	}
 	return req, err
 }
 
@@ -163,6 +183,9 @@ func makeCreateUserHandler(m *mux.Router, endpoints endpoint.Endpoints, options 
 func decodeCreateUserRequest(_ context.Context, r *http1.Request) (interface{}, error) {
 	req := endpoint.CreateUserRequest{}
 	err := json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		err = multierr.Append(ErrJSONDecode, err)
+	}
 	return req, err
 }
 
@@ -196,6 +219,9 @@ func makeGetUserByIDHandler(m *mux.Router, endpoints endpoint.Endpoints, options
 func decodeGetUserByIDRequest(_ context.Context, r *http1.Request) (interface{}, error) {
 	req := endpoint.GetUserByIDRequest{}
 	err := json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		err = multierr.Append(ErrJSONDecode, err)
+	}
 	return req, err
 }
 
@@ -229,6 +255,9 @@ func makeGetUserByEmailHandler(m *mux.Router, endpoints endpoint.Endpoints, opti
 func decodeGetUserByEmailRequest(_ context.Context, r *http1.Request) (interface{}, error) {
 	req := endpoint.GetUserByEmailRequest{}
 	err := json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		err = multierr.Append(ErrJSONDecode, err)
+	}
 	return req, err
 }
 
@@ -262,6 +291,9 @@ func makeUpdateUserEmailHandler(m *mux.Router, endpoints endpoint.Endpoints, opt
 func decodeUpdateUserEmailRequest(_ context.Context, r *http1.Request) (interface{}, error) {
 	req := endpoint.UpdateUserEmailRequest{}
 	err := json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		err = multierr.Append(ErrJSONDecode, err)
+	}
 	return req, err
 }
 
@@ -295,6 +327,9 @@ func makeUpdateUserPasswordHandler(m *mux.Router, endpoints endpoint.Endpoints, 
 func decodeUpdateUserPasswordRequest(_ context.Context, r *http1.Request) (interface{}, error) {
 	req := endpoint.UpdateUserPasswordRequest{}
 	err := json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		err = multierr.Append(ErrJSONDecode, err)
+	}
 	return req, err
 }
 
@@ -328,6 +363,9 @@ func makeUpdateUserInfoHandler(m *mux.Router, endpoints endpoint.Endpoints, opti
 func decodeUpdateUserInfoRequest(_ context.Context, r *http1.Request) (interface{}, error) {
 	req := endpoint.UpdateUserInfoRequest{}
 	err := json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		err = multierr.Append(ErrJSONDecode, err)
+	}
 	return req, err
 }
 
@@ -361,6 +399,9 @@ func makeDeleteUserSoftHandler(m *mux.Router, endpoints endpoint.Endpoints, opti
 func decodeDeleteUserSoftRequest(_ context.Context, r *http1.Request) (interface{}, error) {
 	req := endpoint.DeleteUserSoftRequest{}
 	err := json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		err = multierr.Append(ErrJSONDecode, err)
+	}
 	return req, err
 }
 
@@ -394,6 +435,9 @@ func makeRecoverUserHandler(m *mux.Router, endpoints endpoint.Endpoints, options
 func decodeRecoverUserRequest(_ context.Context, r *http1.Request) (interface{}, error) {
 	req := endpoint.RecoverUserRequest{}
 	err := json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		err = multierr.Append(ErrJSONDecode, err)
+	}
 	return req, err
 }
 
@@ -427,6 +471,9 @@ func makeDeleteUserPermanentHandler(m *mux.Router, endpoints endpoint.Endpoints,
 func decodeDeleteUserPermanentRequest(_ context.Context, r *http1.Request) (interface{}, error) {
 	req := endpoint.DeleteUserPermanentRequest{}
 	err := json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		err = multierr.Append(ErrJSONDecode, err)
+	}
 	return req, err
 }
 
@@ -460,6 +507,9 @@ func makeVerifyPasswordHandler(m *mux.Router, endpoints endpoint.Endpoints, opti
 func decodeVerifyPasswordRequest(_ context.Context, r *http1.Request) (interface{}, error) {
 	req := endpoint.VerifyPasswordRequest{}
 	err := json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		err = multierr.Append(ErrJSONDecode, err)
+	}
 	return req, err
 }
 
@@ -486,9 +536,19 @@ func ErrorDecoder(r *http1.Response) error {
 	return errors.New(w.Error)
 }
 
-// This is used to set the http status, see an example here :
-// https://github.com/go-kit/kit/blob/master/examples/addsvc/pkg/addtransport/http.go#L133
-func err2code(error) int {
+// This is used to set the http status.
+func err2code(err error) int {
+	switch {
+	case errors.Is(err, service.ErrMissingRequestField), errors.Is(err, ErrJSONDecode):
+		return http1.StatusBadRequest
+	case errors.Is(err, service.ErrDuplicatedValue):
+		return http1.StatusConflict
+	case errors.Is(err, service.ErrNotFound):
+		return http1.StatusNotFound
+	case errors.Is(err, service.ErrWrongPassword):
+		return http1.StatusUnauthorized
+	}
+
 	return http1.StatusInternalServerError
 }
 
