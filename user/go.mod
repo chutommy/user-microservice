@@ -5,6 +5,8 @@ go 1.15
 require (
 	github.com/go-kit/kit v0.10.0
 	github.com/golang/protobuf v1.4.3
+	github.com/gorilla/handlers v1.5.1
+	github.com/gorilla/mux v1.7.3
 	github.com/lib/pq v1.9.0
 	github.com/lightstep/lightstep-tracer-go v0.24.0
 	github.com/oklog/oklog v0.3.2
