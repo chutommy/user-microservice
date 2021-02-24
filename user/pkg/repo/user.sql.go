@@ -173,19 +173,19 @@ func (q *Queries) RecoverUser(ctx context.Context, id int64) (User, error) {
 
 const updateUserEmail = `-- name: UpdateUserEmail :one
 update users
-set email = $2
-where id = $1
+set email = $1
+where id = $2
   and deleted_at is null
 returning id, email, hashed_password, first_name, last_name, birth_day, gender, phone_number, updated_at, deleted_at, created_at
 `
 
 type UpdateUserEmailParams struct {
-	ID    int64  `json:"id"`
 	Email string `json:"email"`
+	ID    int64  `json:"id"`
 }
 
 func (q *Queries) UpdateUserEmail(ctx context.Context, arg UpdateUserEmailParams) (User, error) {
-	row := q.db.QueryRowContext(ctx, updateUserEmail, arg.ID, arg.Email)
+	row := q.db.QueryRowContext(ctx, updateUserEmail, arg.Email, arg.ID)
 	var i User
 	err := row.Scan(
 		&i.ID,
@@ -219,8 +219,8 @@ set first_name   = case
                        else $4
         end,
     phone_number = coalesce($5, phone_number)
-    where id = $6
-        and deleted_at is null
+where id = $6
+  and deleted_at is null
 returning id, email, hashed_password, first_name, last_name, birth_day, gender, phone_number, updated_at, deleted_at, created_at
 `
 
@@ -266,19 +266,19 @@ func (q *Queries) UpdateUserInfo(ctx context.Context, arg UpdateUserInfoParams) 
 
 const updateUserPassword = `-- name: UpdateUserPassword :one
 update users
-set hashed_password = $2
-where id = $1
+set hashed_password = $1
+where id = $2
   and deleted_at is null
 returning id, email, hashed_password, first_name, last_name, birth_day, gender, phone_number, updated_at, deleted_at, created_at
 `
 
 type UpdateUserPasswordParams struct {
-	ID             int64  `json:"id"`
 	HashedPassword string `json:"hashedPassword"`
+	ID             int64  `json:"id"`
 }
 
 func (q *Queries) UpdateUserPassword(ctx context.Context, arg UpdateUserPasswordParams) (User, error) {
-	row := q.db.QueryRowContext(ctx, updateUserPassword, arg.ID, arg.HashedPassword)
+	row := q.db.QueryRowContext(ctx, updateUserPassword, arg.HashedPassword, arg.ID)
 	var i User
 	err := row.Scan(
 		&i.ID,

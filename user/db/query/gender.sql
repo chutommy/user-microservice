@@ -1,12 +1,12 @@
 -- name: CreateGender :one
 insert into genders (title)
-values ($1)
+values (@title)
 returning *;
 
 -- name: GetGender :one
 select *
 from genders
-where id = $1
+where id = @id
 limit 1;
 
 -- name: ListGenders :many
@@ -16,4 +16,4 @@ from genders;
 -- name: DeleteGender :exec
 delete
 from genders
-where id = $1;
+where id = @id;

@@ -1,33 +1,33 @@
 -- name: CreateUser :one
 insert into users (email, hashed_password, first_name, last_name, birth_day, gender, phone_number)
-values ($1, $2, $3, $4, $5, $6, $7)
+values (@email, @hashed_password, @first_name, @last_name, @birth_day, @gender, @phone_number)
 returning *;
 
 -- name: GetUserByID :one
 select *
 from users
-where id = $1
+where id = @id
   and deleted_at is null
 limit 1;
 
 -- name: GetUserByEmail :one
 select *
 from users
-where email = $1
+where email = @email
   and deleted_at is null
 limit 1;
 
 -- name: UpdateUserEmail :one
 update users
-set email = $2
-where id = $1
+set email = @email
+where id = @id
   and deleted_at is null
 returning *;
 
 -- name: UpdateUserPassword :one
 update users
-set hashed_password = $2
-where id = $1
+set hashed_password = @hashed_password
+where id = @id
   and deleted_at is null
 returning *;
 
@@ -52,32 +52,32 @@ set first_name   = case
                        else @gender
         end,
     phone_number = coalesce(@phone_number, phone_number)
-    where id = @id
-        and deleted_at is null
+where id = @id
+  and deleted_at is null
 returning *;
 
 -- name: DeleteUserSoft :exec
 update users
 set deleted_at = now()
-where id = $1
+where id = @id
   and deleted_at is null;
 
 -- name: RecoverUser :one
 update users
 set deleted_at = null
-where id = $1
+where id = @id
   and deleted_at is not null
 returning *;
 
 -- name: DeleteUserPermanent :exec
 delete
 from users
-where id = $1
+where id = @id
   and deleted_at is null;
 
 -- name: GetHashedPassword :one
 select hashed_password
 from users
-where id = $1
+where id = @id
   and deleted_at is null
 limit 1;
