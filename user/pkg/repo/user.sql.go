@@ -205,33 +205,47 @@ func (q *Queries) UpdateUserEmail(ctx context.Context, arg UpdateUserEmailParams
 
 const updateUserInfo = `-- name: UpdateUserInfo :one
 update users
-set first_name   = $2,
-    last_name    = $3,
-    birth_day    = $4,
-    gender       = $5,
-    phone_number = $6
-where id = $1
-  and deleted_at is null
+set first_name   = case
+                       when coalesce($1, '') = '' then first_name
+                       else $1
+    end,
+    last_name    = case
+                       when coalesce($2, '') = '' then last_name
+                       else $2
+        end,
+    birth_day    = coalesce($3, birth_day),
+    gender       = case
+                       when coalesce($4, 0) = 0 then gender
+                       else $4
+        end,
+    phone_number = coalesce($5, phone_number)
+    where id = $6
+        and deleted_at is null
 returning id, email, hashed_password, first_name, last_name, birth_day, gender, phone_number, updated_at, deleted_at, created_at
 `
 
 type UpdateUserInfoParams struct {
-	ID          int64          `json:"id"`
-	FirstName   string         `json:"firstName"`
-	LastName    string         `json:"lastName"`
+	FirstName   interface{}    `json:"firstName"`
+	LastName    interface{}    `json:"lastName"`
 	BirthDay    sql.NullTime   `json:"birthDay"`
-	Gender      int16          `json:"gender"`
+	Gender      interface{}    `json:"gender"`
 	PhoneNumber sql.NullString `json:"phoneNumber"`
+	ID          int64          `json:"id"`
 }
 
+// set first_name   = $2,
+//     last_name    = $3,
+//     birth_day    = $4,
+//     gender       = $5,
+//     phone_number = $6
 func (q *Queries) UpdateUserInfo(ctx context.Context, arg UpdateUserInfoParams) (User, error) {
 	row := q.db.QueryRowContext(ctx, updateUserInfo,
-		arg.ID,
 		arg.FirstName,
 		arg.LastName,
 		arg.BirthDay,
 		arg.Gender,
 		arg.PhoneNumber,
+		arg.ID,
 	)
 	var i User
 	err := row.Scan(

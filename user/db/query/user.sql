@@ -33,13 +33,27 @@ returning *;
 
 -- name: UpdateUserInfo :one
 update users
-set first_name   = $2,
-    last_name    = $3,
-    birth_day    = $4,
-    gender       = $5,
-    phone_number = $6
-where id = $1
-  and deleted_at is null
+-- set first_name   = $2,
+--     last_name    = $3,
+--     birth_day    = $4,
+--     gender       = $5,
+--     phone_number = $6
+set first_name   = case
+                       when coalesce(@first_name, '') = '' then first_name
+                       else @first_name
+    end,
+    last_name    = case
+                       when coalesce(@last_name, '') = '' then last_name
+                       else @last_name
+        end,
+    birth_day    = coalesce(@birth_day, birth_day),
+    gender       = case
+                       when coalesce(@gender, 0) = 0 then gender
+                       else @gender
+        end,
+    phone_number = coalesce(@phone_number, phone_number)
+    where id = @id
+        and deleted_at is null
 returning *;
 
 -- name: DeleteUserSoft :exec

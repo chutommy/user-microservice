@@ -299,6 +299,10 @@ func (b *basicUserService) UpdateUserInfo(ctx context.Context, id int64, user re
 		return repo.User{}, fmt.Errorf("%w: missing 'id'", ErrMissingRequestField)
 	}
 
+	if user.FirstName == "" && user.LastName == "" && user.Gender == 0 && user.BirthDay == (sql.NullTime{}) && user.PhoneNumber == (sql.NullString{}) {
+		return repo.User{}, fmt.Errorf("%w: no update field", ErrMissingRequestField)
+	}
+
 	// update
 	u, err := b.repo.UpdateUserInfo(ctx, repo.UpdateUserInfoParams{
 		ID:          id,
