@@ -15,8 +15,8 @@ import (
 
 // makeAddGenderHandler creates the handler logic
 func makeAddGenderHandler(m *mux.Router, endpoints endpoint.Endpoints, options []http.ServerOption) {
-	m.Methods("POST").Path("/add-gender").Handler(handlers.CORS(
-		handlers.AllowedMethods([]string{"POST"}),
+	m.Methods(http1.MethodPost).Path("/add-gender").Handler(handlers.CORS(
+		handlers.AllowedMethods([]string{http1.MethodPost}),
 		handlers.AllowedOrigins([]string{"*"}),
 	)(http.NewServer(
 		endpoints.AddGenderEndpoint,
@@ -48,8 +48,8 @@ func encodeAddGenderResponse(ctx context.Context, w http1.ResponseWriter, respon
 
 // makeGetGenderHandler creates the handler logic
 func makeGetGenderHandler(m *mux.Router, endpoints endpoint.Endpoints, options []http.ServerOption) {
-	m.Methods("POST").Path("/get-gender").Handler(handlers.CORS(
-		handlers.AllowedMethods([]string{"POST"}),
+	m.Methods(http1.MethodGet).Path("/get-gender").Handler(handlers.CORS(
+		handlers.AllowedMethods([]string{http1.MethodGet}),
 		handlers.AllowedOrigins([]string{"*"}),
 	)(http.NewServer(
 		endpoints.GetGenderEndpoint,
@@ -81,8 +81,8 @@ func encodeGetGenderResponse(ctx context.Context, w http1.ResponseWriter, respon
 
 // makeListGendersHandler creates the handler logic
 func makeListGendersHandler(m *mux.Router, endpoints endpoint.Endpoints, options []http.ServerOption) {
-	m.Methods("POST").Path("/list-genders").Handler(handlers.CORS(
-		handlers.AllowedMethods([]string{"POST"}),
+	m.Methods(http1.MethodGet).Path("/list-genders").Handler(handlers.CORS(
+		handlers.AllowedMethods([]string{http1.MethodGet}),
 		handlers.AllowedOrigins([]string{"*"}),
 	)(http.NewServer(
 		endpoints.ListGendersEndpoint,
@@ -114,8 +114,8 @@ func encodeListGendersResponse(ctx context.Context, w http1.ResponseWriter, resp
 
 // makeRemoveGenderHandler creates the handler logic
 func makeRemoveGenderHandler(m *mux.Router, endpoints endpoint.Endpoints, options []http.ServerOption) {
-	m.Methods("POST").Path("/remove-gender").Handler(handlers.CORS(
-		handlers.AllowedMethods([]string{"POST"}),
+	m.Methods(http1.MethodDelete).Path("/remove-gender").Handler(handlers.CORS(
+		handlers.AllowedMethods([]string{http1.MethodDelete}),
 		handlers.AllowedOrigins([]string{"*"}),
 	)(http.NewServer(
 		endpoints.RemoveGenderEndpoint,
@@ -147,8 +147,8 @@ func encodeRemoveGenderResponse(ctx context.Context, w http1.ResponseWriter, res
 
 // makeCreateUserHandler creates the handler logic
 func makeCreateUserHandler(m *mux.Router, endpoints endpoint.Endpoints, options []http.ServerOption) {
-	m.Methods("POST").Path("/create-user").Handler(handlers.CORS(
-		handlers.AllowedMethods([]string{"POST"}),
+	m.Methods(http1.MethodPost).Path("/create-user").Handler(handlers.CORS(
+		handlers.AllowedMethods([]string{http1.MethodPost}),
 		handlers.AllowedOrigins([]string{"*"}),
 	)(http.NewServer(
 		endpoints.CreateUserEndpoint,
@@ -180,8 +180,8 @@ func encodeCreateUserResponse(ctx context.Context, w http1.ResponseWriter, respo
 
 // makeGetUserByIDHandler creates the handler logic
 func makeGetUserByIDHandler(m *mux.Router, endpoints endpoint.Endpoints, options []http.ServerOption) {
-	m.Methods("POST").Path("/get-user-by-id").Handler(handlers.CORS(
-		handlers.AllowedMethods([]string{"POST"}),
+	m.Methods(http1.MethodGet).Path("/get-user-by-id").Handler(handlers.CORS(
+		handlers.AllowedMethods([]string{http1.MethodGet}),
 		handlers.AllowedOrigins([]string{"*"}),
 	)(http.NewServer(
 		endpoints.GetUserByIDEndpoint,
@@ -213,8 +213,8 @@ func encodeGetUserByIDResponse(ctx context.Context, w http1.ResponseWriter, resp
 
 // makeGetUserByEmailHandler creates the handler logic
 func makeGetUserByEmailHandler(m *mux.Router, endpoints endpoint.Endpoints, options []http.ServerOption) {
-	m.Methods("POST").Path("/get-user-by-email").Handler(handlers.CORS(
-		handlers.AllowedMethods([]string{"POST"}),
+	m.Methods(http1.MethodGet).Path("/get-user-by-email").Handler(handlers.CORS(
+		handlers.AllowedMethods([]string{http1.MethodGet}),
 		handlers.AllowedOrigins([]string{"*"}),
 	)(http.NewServer(
 		endpoints.GetUserByEmailEndpoint,
@@ -246,8 +246,8 @@ func encodeGetUserByEmailResponse(ctx context.Context, w http1.ResponseWriter, r
 
 // makeUpdateUserEmailHandler creates the handler logic
 func makeUpdateUserEmailHandler(m *mux.Router, endpoints endpoint.Endpoints, options []http.ServerOption) {
-	m.Methods("POST").Path("/update-user-email").Handler(handlers.CORS(
-		handlers.AllowedMethods([]string{"POST"}),
+	m.Methods(http1.MethodPut).Path("/update-user-email").Handler(handlers.CORS(
+		handlers.AllowedMethods([]string{http1.MethodPut}),
 		handlers.AllowedOrigins([]string{"*"}),
 	)(http.NewServer(
 		endpoints.UpdateUserEmailEndpoint,
@@ -279,8 +279,8 @@ func encodeUpdateUserEmailResponse(ctx context.Context, w http1.ResponseWriter, 
 
 // makeUpdateUserPasswordHandler creates the handler logic
 func makeUpdateUserPasswordHandler(m *mux.Router, endpoints endpoint.Endpoints, options []http.ServerOption) {
-	m.Methods("POST").Path("/update-user-password").Handler(handlers.CORS(
-		handlers.AllowedMethods([]string{"POST"}),
+	m.Methods(http1.MethodPut).Path("/update-user-password").Handler(handlers.CORS(
+		handlers.AllowedMethods([]string{http1.MethodPut}),
 		handlers.AllowedOrigins([]string{"*"}),
 	)(http.NewServer(
 		endpoints.UpdateUserPasswordEndpoint,
@@ -312,8 +312,8 @@ func encodeUpdateUserPasswordResponse(ctx context.Context, w http1.ResponseWrite
 
 // makeUpdateUserInfoHandler creates the handler logic
 func makeUpdateUserInfoHandler(m *mux.Router, endpoints endpoint.Endpoints, options []http.ServerOption) {
-	m.Methods("POST").Path("/update-user-info").Handler(handlers.CORS(
-		handlers.AllowedMethods([]string{"POST"}),
+	m.Methods(http1.MethodPut).Path("/update-user-info").Handler(handlers.CORS(
+		handlers.AllowedMethods([]string{http1.MethodPut}),
 		handlers.AllowedOrigins([]string{"*"}),
 	)(http.NewServer(
 		endpoints.UpdateUserInfoEndpoint,
@@ -345,8 +345,8 @@ func encodeUpdateUserInfoResponse(ctx context.Context, w http1.ResponseWriter, r
 
 // makeDeleteUserSoftHandler creates the handler logic
 func makeDeleteUserSoftHandler(m *mux.Router, endpoints endpoint.Endpoints, options []http.ServerOption) {
-	m.Methods("POST").Path("/delete-user-soft").Handler(handlers.CORS(
-		handlers.AllowedMethods([]string{"POST"}),
+	m.Methods(http1.MethodDelete).Path("/delete-user-soft").Handler(handlers.CORS(
+		handlers.AllowedMethods([]string{http1.MethodDelete}),
 		handlers.AllowedOrigins([]string{"*"}),
 	)(http.NewServer(
 		endpoints.DeleteUserSoftEndpoint,
@@ -378,8 +378,8 @@ func encodeDeleteUserSoftResponse(ctx context.Context, w http1.ResponseWriter, r
 
 // makeRecoverUserHandler creates the handler logic
 func makeRecoverUserHandler(m *mux.Router, endpoints endpoint.Endpoints, options []http.ServerOption) {
-	m.Methods("POST").Path("/recover-user").Handler(handlers.CORS(
-		handlers.AllowedMethods([]string{"POST"}),
+	m.Methods(http1.MethodPost).Path("/recover-user").Handler(handlers.CORS(
+		handlers.AllowedMethods([]string{http1.MethodPost}),
 		handlers.AllowedOrigins([]string{"*"}),
 	)(http.NewServer(
 		endpoints.RecoverUserEndpoint,
@@ -411,8 +411,8 @@ func encodeRecoverUserResponse(ctx context.Context, w http1.ResponseWriter, resp
 
 // makeDeleteUserPermanentHandler creates the handler logic
 func makeDeleteUserPermanentHandler(m *mux.Router, endpoints endpoint.Endpoints, options []http.ServerOption) {
-	m.Methods("POST").Path("/delete-user-permanent").Handler(handlers.CORS(
-		handlers.AllowedMethods([]string{"POST"}),
+	m.Methods(http1.MethodDelete).Path("/delete-user-permanent").Handler(handlers.CORS(
+		handlers.AllowedMethods([]string{http1.MethodDelete}),
 		handlers.AllowedOrigins([]string{"*"}),
 	)(http.NewServer(
 		endpoints.DeleteUserPermanentEndpoint,
@@ -444,8 +444,8 @@ func encodeDeleteUserPermanentResponse(ctx context.Context, w http1.ResponseWrit
 
 // makeVerifyPasswordHandler creates the handler logic
 func makeVerifyPasswordHandler(m *mux.Router, endpoints endpoint.Endpoints, options []http.ServerOption) {
-	m.Methods("POST").Path("/verify-password").Handler(handlers.CORS(
-		handlers.AllowedMethods([]string{"POST"}),
+	m.Methods(http1.MethodPost).Path("/verify-password").Handler(handlers.CORS(
+		handlers.AllowedMethods([]string{http1.MethodPost}),
 		handlers.AllowedOrigins([]string{"*"}),
 	)(http.NewServer(
 		endpoints.VerifyPasswordEndpoint,

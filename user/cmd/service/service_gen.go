@@ -4,6 +4,7 @@ package service
 import (
 	endpoint1 "github.com/go-kit/kit/endpoint"
 	log "github.com/go-kit/kit/log"
+	prometheus "github.com/go-kit/kit/metrics/prometheus"
 	opentracing "github.com/go-kit/kit/tracing/opentracing"
 	grpc "github.com/go-kit/kit/transport/grpc"
 	http "github.com/go-kit/kit/transport/http"
@@ -11,6 +12,7 @@ import (
 	opentracinggo "github.com/opentracing/opentracing-go"
 	endpoint "user/pkg/endpoint"
 	http1 "user/pkg/http"
+	service "user/pkg/service"
 )
 
 func createService(endpoints endpoint.Endpoints) (g *group.Group) {
@@ -56,6 +58,25 @@ func defaultGRPCOptions(logger log.Logger, tracer opentracinggo.Tracer) map[stri
 		"VerifyPassword":      {grpc.ServerErrorLogger(logger), grpc.ServerBefore(opentracing.GRPCToContext(tracer, "VerifyPassword", logger))},
 	}
 	return options
+}
+func addDefaultEndpointMiddleware(logger log.Logger, duration *prometheus.Summary, mw map[string][]endpoint1.Middleware) {
+	mw["AddGender"] = []endpoint1.Middleware{endpoint.LoggingMiddleware(log.With(logger, "method", "AddGender")), endpoint.InstrumentingMiddleware(duration.With("method", "AddGender"))}
+	mw["GetGender"] = []endpoint1.Middleware{endpoint.LoggingMiddleware(log.With(logger, "method", "GetGender")), endpoint.InstrumentingMiddleware(duration.With("method", "GetGender"))}
+	mw["ListGenders"] = []endpoint1.Middleware{endpoint.LoggingMiddleware(log.With(logger, "method", "ListGenders")), endpoint.InstrumentingMiddleware(duration.With("method", "ListGenders"))}
+	mw["RemoveGender"] = []endpoint1.Middleware{endpoint.LoggingMiddleware(log.With(logger, "method", "RemoveGender")), endpoint.InstrumentingMiddleware(duration.With("method", "RemoveGender"))}
+	mw["CreateUser"] = []endpoint1.Middleware{endpoint.LoggingMiddleware(log.With(logger, "method", "CreateUser")), endpoint.InstrumentingMiddleware(duration.With("method", "CreateUser"))}
+	mw["GetUserByID"] = []endpoint1.Middleware{endpoint.LoggingMiddleware(log.With(logger, "method", "GetUserByID")), endpoint.InstrumentingMiddleware(duration.With("method", "GetUserByID"))}
+	mw["GetUserByEmail"] = []endpoint1.Middleware{endpoint.LoggingMiddleware(log.With(logger, "method", "GetUserByEmail")), endpoint.InstrumentingMiddleware(duration.With("method", "GetUserByEmail"))}
+	mw["UpdateUserEmail"] = []endpoint1.Middleware{endpoint.LoggingMiddleware(log.With(logger, "method", "UpdateUserEmail")), endpoint.InstrumentingMiddleware(duration.With("method", "UpdateUserEmail"))}
+	mw["UpdateUserPassword"] = []endpoint1.Middleware{endpoint.LoggingMiddleware(log.With(logger, "method", "UpdateUserPassword")), endpoint.InstrumentingMiddleware(duration.With("method", "UpdateUserPassword"))}
+	mw["UpdateUserInfo"] = []endpoint1.Middleware{endpoint.LoggingMiddleware(log.With(logger, "method", "UpdateUserInfo")), endpoint.InstrumentingMiddleware(duration.With("method", "UpdateUserInfo"))}
+	mw["DeleteUserSoft"] = []endpoint1.Middleware{endpoint.LoggingMiddleware(log.With(logger, "method", "DeleteUserSoft")), endpoint.InstrumentingMiddleware(duration.With("method", "DeleteUserSoft"))}
+	mw["RecoverUser"] = []endpoint1.Middleware{endpoint.LoggingMiddleware(log.With(logger, "method", "RecoverUser")), endpoint.InstrumentingMiddleware(duration.With("method", "RecoverUser"))}
+	mw["DeleteUserPermanent"] = []endpoint1.Middleware{endpoint.LoggingMiddleware(log.With(logger, "method", "DeleteUserPermanent")), endpoint.InstrumentingMiddleware(duration.With("method", "DeleteUserPermanent"))}
+	mw["VerifyPassword"] = []endpoint1.Middleware{endpoint.LoggingMiddleware(log.With(logger, "method", "VerifyPassword")), endpoint.InstrumentingMiddleware(duration.With("method", "VerifyPassword"))}
+}
+func addDefaultServiceMiddleware(logger log.Logger, mw []service.Middleware) []service.Middleware {
+	return append(mw, service.LoggingMiddleware(logger))
 }
 func addEndpointMiddlewareToAllMethods(mw map[string][]endpoint1.Middleware, m endpoint1.Middleware) {
 	methods := []string{"AddGender", "GetGender", "ListGenders", "RemoveGender", "CreateUser", "GetUserByID", "GetUserByEmail", "UpdateUserEmail", "UpdateUserPassword", "UpdateUserInfo", "DeleteUserSoft", "RecoverUser", "DeleteUserPermanent", "VerifyPassword"}
