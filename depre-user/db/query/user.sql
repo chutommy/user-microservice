@@ -72,8 +72,7 @@ returning *;
 -- name: DeleteUserPermanent :exec
 delete
 from users
-where id = @id
-  and deleted_at is null;
+where id = @id;
 
 -- name: GetHashedPassword :one
 select hashed_password

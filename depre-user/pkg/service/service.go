@@ -356,7 +356,7 @@ func (b *basicUserService) RecoverUser(ctx context.Context, id int64) (repo.User
 	u, err := b.repo.RecoverUser(ctx, id)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return repo.User{}, fmt.Errorf("%w: no user with 'id': %d", ErrNotFound, id)
+			return repo.User{}, fmt.Errorf("%w: no deleted user with 'id': %d", ErrNotFound, id)
 		}
 
 		return repo.User{}, multierr.Append(

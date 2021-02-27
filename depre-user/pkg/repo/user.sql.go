@@ -55,7 +55,6 @@ const deleteUserPermanent = `-- name: DeleteUserPermanent :exec
 delete
 from users
 where id = $1
-  and deleted_at is null
 `
 
 func (q *Queries) DeleteUserPermanent(ctx context.Context, id int64) error {
