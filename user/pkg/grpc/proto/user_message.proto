@@ -14,19 +14,6 @@ message User {
     OTHER = 3;
   }
 
-  // Date represents a whole calendar date.
-  // Representation can be following:
-  //
-  // * A full date (birthday)
-  // * A zero-year, month-day value (anniversary)
-  // * A zero-day, year-month value (expiration)
-  // * A year only, zero month and day (birth year)
-  message Date {
-    int32 year = 1;
-    int32 month = 2;
-    int32 day = 3;
-  }
-
   // User's unique ID of type UUID.
   string id = 1;
 
@@ -45,5 +32,7 @@ message User {
   string first_name = 5;
   string last_name = 6;
   Gender gender = 7;
-  Date birthday = 8;
+
+  // Birthday field contains a date in a format of "2006-Jan-02".
+  string birthday = 8;
 }

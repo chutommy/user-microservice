@@ -14,10 +14,12 @@ import (
 
 	"github.com/chutified/booking-terminal/user/pkg/grpc/userpb"
 	"github.com/chutified/booking-terminal/user/pkg/repo"
-	"github.com/chutified/booking-terminal/user/pkg/util"
 )
 
 var (
+	// ShortForm is a format of a birthday date.
+	ShortForm = "2006-Jan-02"
+
 	// ErrMissingArgument is returned if the argument is invalid because of an empty
 	// mandatory field.
 	ErrEmptyField = errors.New("required field has empty value")
@@ -58,11 +60,17 @@ func (u *UserServer) RegisterUser(ctx context.Context, req *userpb.RegisterUserR
 	}
 
 	// process birthday
-	bd := user.GetBirthday()
-	bdTime := sql.NullTime{}
-	if util.ValidateDate(bd.GetYear(), bd.GetMonth(), bd.GetDay()) {
-		bdTime.Time = time.Date(int(bd.GetYear()), time.Month(bd.GetMonth()), int(bd.GetDay()), 0, 0, 0, 0, time.UTC)
-		bdTime.Valid = true
+	var bdTime sql.NullTime
+	if bd := user.GetBirthday(); bd != "" {
+		parsedBD, err := time.Parse(ShortForm, bd)
+		if err != nil {
+			return nil, status.Errorf(codes.InvalidArgument, "field time is in unsupported format: %v instead of %v", err, ShortForm)
+		}
+
+		bdTime = sql.NullTime{
+			Time:  parsedBD,
+			Valid: true,
+		}
 	}
 
 	// build argument

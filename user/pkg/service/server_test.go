@@ -31,11 +31,7 @@ func randomUser() *userpb.User {
 		FirstName: util.RandomName(),
 		LastName:  util.RandomName(),
 		Gender:    userpb.User_Gender(util.RandomInt(0, 3)),
-		Birthday: &userpb.User_Date{
-			Year:  int32(util.RandomInt(1900, 2200)),
-			Month: int32(util.RandomInt(1, 12)),
-			Day:   int32(util.RandomInt(1, 31)),
-		},
+		Birthday:  time.Now().Add(-200000 * time.Hour).Format(service.ShortForm),
 	}
 }
 
@@ -44,12 +40,8 @@ func TestUserServer_RegisterUser(t *testing.T) {
 
 	u1 := randomUser()
 	u1p, _ := bcrypt.GenerateFromPassword([]byte(u1.Password), bcrypt.DefaultCost)
-	u1t := time.Date(
-		int(u1.Birthday.Year),
-		time.Month(u1.Birthday.Month),
-		int(u1.Birthday.Day),
-		0, 0, 0, 0, time.UTC,
-	)
+	u1t, err := time.Parse(service.ShortForm, u1.Birthday)
+	require.NoError(t, err)
 
 	tests := []struct {
 		name      string
@@ -69,8 +61,8 @@ func TestUserServer_RegisterUser(t *testing.T) {
 					ID:    uuid.MustParse(u1.Id),
 					Email: u1.Email,
 					PhoneNumber: sql.NullString{
-						String: "",
-						Valid:  false,
+						String: u1.Phone,
+						Valid:  true,
 					},
 					HashedPassword: string(u1p),
 					FirstName:      u1.FirstName,
@@ -115,7 +107,7 @@ func TestUserServer_RegisterUser(t *testing.T) {
 				FirstName: u1.FirstName,
 				LastName:  u1.LastName,
 				Gender:    userpb.User_Gender(0),
-				Birthday:  &userpb.User_Date{},
+				Birthday:  "",
 			},
 			expID:   u1.Id,
 			expCode: codes.OK,
