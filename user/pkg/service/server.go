@@ -112,7 +112,43 @@ func (u *UserServer) RegisterUser(ctx context.Context, req *userpb.RegisterUserR
 }
 
 func (u *UserServer) GetUser(ctx context.Context, req *userpb.GetUserRequest) (*userpb.GetUserResponse, error) {
-	panic("implement me")
+	id := req.GetId()
+	if id == "" {
+		return nil, status.Errorf(codes.InvalidArgument, "%v: 'id' field", ErrEmptyField)
+	}
+
+	// parse ID
+	uid, err := uuid.Parse(id)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "invalid id '%v': does not follow UUID pattern", id)
+	}
+
+	// retrieve user
+	user, err := u.repo.GetUser(ctx, uid)
+	if err != nil {
+		code := codes.Internal
+
+		if errors.Is(err, sql.ErrNoRows) {
+			code = codes.NotFound
+		}
+
+		return nil, status.Errorf(code, "failed to retrieve user with id: %s", id)
+	}
+
+	// construct response
+	resp := &userpb.GetUserResponse{
+		User: &userpb.User{
+			Id:        user.ID.String(),
+			Email:     user.Email,
+			Phone:     user.PhoneNumber.String,
+			FirstName: user.FirstName,
+			LastName:  user.LastName,
+			Gender:    userpb.User_Gender(user.Gender),
+			Birthday:  user.BirthDay.Time.Format(ShortForm),
+		},
+	}
+
+	return resp, nil
 }
 
 func (u *UserServer) UpdateUser(ctx context.Context, req *userpb.UpdateUserRequest) (*userpb.UpdateUserResponse, error) {

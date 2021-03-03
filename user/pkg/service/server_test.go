@@ -232,3 +232,78 @@ func TestUserServer_RegisterUser(t *testing.T) {
 		})
 	}
 }
+
+func TestUserServer_GetUser(t *testing.T) {
+	t.Parallel()
+
+	// build a random user for testing purpose
+	u1 := randomUser()
+	u1p, _ := bcrypt.GenerateFromPassword([]byte(u1.Password), bcrypt.DefaultCost)
+	u1t, err := time.Parse(service.ShortForm, u1.Birthday)
+	require.NoError(t, err)
+
+	tests := []struct {
+		name      string
+		buildRepo func(q *mocks.Querier)
+		inpID     string
+		expUser   *userpb.User
+		expCode   codes.Code
+	}{
+		{
+			name: "ok",
+			buildRepo: func(q *mocks.Querier) {
+				q.On("GetUser", mock.Anything, mock.Anything).Return(repo.User{
+					ID:    uuid.MustParse(u1.Id),
+					Email: u1.Email,
+					PhoneNumber: sql.NullString{
+						String: u1.Phone,
+						Valid:  true,
+					},
+					HashedPassword: string(u1p),
+					FirstName:      u1.FirstName,
+					LastName:       u1.LastName,
+					Gender:         int16(u1.Gender),
+					BirthDay: sql.NullTime{
+						Time:  u1t,
+						Valid: true,
+					},
+					UpdatedAt: sql.NullTime{},
+					CreatedAt: time.Now().Add(-1000 * time.Hour),
+				}, nil)
+			},
+			inpID:   u1.Id,
+			expUser: u1,
+			expCode: codes.OK,
+		},
+		// TODO: complete test cases
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// construct a mock server
+			mockRepo := new(mocks.Querier)
+			tt.buildRepo(mockRepo)
+			server := service.NewUserServer(mockRepo)
+
+			arg := &userpb.GetUserRequest{Id: tt.inpID}
+
+			resp, err := server.GetUser(context.Background(), arg)
+			if tt.expCode == codes.OK {
+				require.NoError(t, err)
+				require.NotNil(t, resp.User)
+
+				tt.expUser.Password = ""
+				require.Equal(t, tt.expUser, resp.User)
+			} else {
+				require.Error(t, err)
+				require.Nil(t, resp.User)
+
+				st, ok := status.FromError(err)
+				require.True(t, ok)
+				require.Equal(t, tt.expCode, st.Code())
+			}
+
+			mockRepo.AssertExpectations(t)
+		})
+	}
+}
