@@ -275,7 +275,38 @@ func TestUserServer_GetUser(t *testing.T) {
 			expUser: u1,
 			expCode: codes.OK,
 		},
-		// TODO: complete test cases
+		{
+			name:      "empty id",
+			buildRepo: func(q *mocks.Querier) {},
+			inpID:     "",
+			expUser:   nil,
+			expCode:   codes.InvalidArgument,
+		},
+		{
+			name:      "invalid id",
+			buildRepo: func(q *mocks.Querier) {},
+			inpID:     "invalid_uuid",
+			expUser:   nil,
+			expCode:   codes.InvalidArgument,
+		},
+		{
+			name: "user not found",
+			buildRepo: func(q *mocks.Querier) {
+				q.On("GetUser", mock.Anything, mock.Anything).Return(repo.User{}, sql.ErrNoRows)
+			},
+			inpID:   u1.Id,
+			expUser: &userpb.User{},
+			expCode: codes.NotFound,
+		},
+		{
+			name: "internal error",
+			buildRepo: func(q *mocks.Querier) {
+				q.On("GetUser", mock.Anything, mock.Anything).Return(repo.User{}, sql.ErrConnDone)
+			},
+			inpID:   u1.Id,
+			expUser: &userpb.User{},
+			expCode: codes.Internal,
+		},
 	}
 
 	for _, tt := range tests {
@@ -296,7 +327,7 @@ func TestUserServer_GetUser(t *testing.T) {
 				require.Equal(t, tt.expUser, resp.User)
 			} else {
 				require.Error(t, err)
-				require.Nil(t, resp.User)
+				require.Nil(t, resp)
 
 				st, ok := status.FromError(err)
 				require.True(t, ok)
