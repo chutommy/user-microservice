@@ -38,17 +38,24 @@ func (_m *Querier) CreateUser(ctx context.Context, arg repo.CreateUserParams) (r
 }
 
 // DeleteUser provides a mock function with given fields: ctx, id
-func (_m *Querier) DeleteUser(ctx context.Context, id uuid.UUID) error {
+func (_m *Querier) DeleteUser(ctx context.Context, id uuid.UUID) (int64, error) {
 	ret := _m.Called(ctx, id)
 
-	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, uuid.UUID) error); ok {
+	var r0 int64
+	if rf, ok := ret.Get(0).(func(context.Context, uuid.UUID) int64); ok {
 		r0 = rf(ctx, id)
 	} else {
-		r0 = ret.Error(0)
+		r0 = ret.Get(0).(int64)
 	}
 
-	return r0
+	var r1 error
+	if rf, ok := ret.Get(1).(func(context.Context, uuid.UUID) error); ok {
+		r1 = rf(ctx, id)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
 }
 
 // GetUser provides a mock function with given fields: ctx, id

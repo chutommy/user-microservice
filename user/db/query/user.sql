@@ -21,7 +21,8 @@ set email           = case when coalesce(@email, '') = '' then email else @email
 where id = @id
 returning *;
 
--- name: DeleteUser :exec
+-- name: DeleteUser :one
 delete
 from users
-where id = @id;
+where id = @id
+returning count(*);

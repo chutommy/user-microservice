@@ -156,5 +156,30 @@ func (u *UserServer) UpdateUser(ctx context.Context, req *userpb.UpdateUserReque
 }
 
 func (u *UserServer) DeleteUser(ctx context.Context, req *userpb.DeleteUserRequest) (*userpb.DeleteUserResponse, error) {
-	panic("implement me")
+	id := req.GetId()
+	if id == "" {
+		return nil, status.Errorf(codes.InvalidArgument, "%v: 'id' field", ErrEmptyField)
+	}
+
+	// parse ID
+	uid, err := uuid.Parse(id)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "invalid id '%v': does not follow UUID pattern", id)
+	}
+
+	// remove user
+	affected, err := u.repo.DeleteUser(ctx, uid)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "failed to retrieve user with id: %s", id)
+	}
+	if affected != 0 {
+		return nil, status.Errorf(codes.NotFound, "failed to retrieve user with id: %s", id)
+	}
+
+	// construct response
+	resp := &userpb.DeleteUserResponse{
+		Id: uid.String(),
+	}
+
+	return resp, nil
 }
