@@ -169,11 +169,11 @@ func (u *UserServer) DeleteUser(ctx context.Context, req *userpb.DeleteUserReque
 
 	// remove user
 	affected, err := u.repo.DeleteUser(ctx, uid)
-	if err != nil {
-		return nil, status.Errorf(codes.Internal, "failed to retrieve user with id: %s", id)
+	if err != nil || affected > 1 {
+		return nil, status.Errorf(codes.Internal, "failed to delete user with id: %s", id)
 	}
-	if affected != 0 {
-		return nil, status.Errorf(codes.NotFound, "failed to retrieve user with id: %s", id)
+	if affected == 0 {
+		return nil, status.Errorf(codes.NotFound, "failed to delete user with id: %s", id)
 	}
 
 	// construct response
