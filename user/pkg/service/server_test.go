@@ -338,3 +338,82 @@ func TestUserServer_GetUser(t *testing.T) {
 		})
 	}
 }
+
+func TestUserServer_DeleteUser(t *testing.T) {
+	t.Parallel()
+
+	// build a random user for testing purpose
+	u1 := randomUser()
+
+	tests := []struct {
+		name      string
+		buildRepo func(q *mocks.Querier)
+		inpID     string
+		expID     string
+		expCode   codes.Code
+	}{
+		{
+			name: "ok",
+			buildRepo: func(q *mocks.Querier) {
+				q.On("DeleteUser", mock.Anything, uuid.MustParse(u1.Id)).Return(int64(1), nil)
+			},
+			inpID:   u1.Id,
+			expID:   u1.Id,
+			expCode: codes.OK,
+		},
+		{
+			name: "not found",
+			buildRepo: func(q *mocks.Querier) {
+				q.On("DeleteUser", mock.Anything, uuid.MustParse(u1.Id)).Return(int64(0), nil)
+			},
+			inpID:   u1.Id,
+			expID:   "",
+			expCode: codes.NotFound,
+		},
+		{
+			name: "affected more id",
+			buildRepo: func(q *mocks.Querier) {
+				q.On("DeleteUser", mock.Anything, uuid.MustParse(u1.Id)).Return(int64(2), nil)
+			},
+			inpID:   u1.Id,
+			expID:   "",
+			expCode: codes.Internal,
+		},
+		{
+			name: "internal error",
+			buildRepo: func(q *mocks.Querier) {
+				q.On("DeleteUser", mock.Anything, uuid.MustParse(u1.Id)).Return(int64(0), sql.ErrConnDone)
+			},
+			inpID:   u1.Id,
+			expID:   "",
+			expCode: codes.Internal,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// construct a mock server
+			mockRepo := new(mocks.Querier)
+			tt.buildRepo(mockRepo)
+			server := service.NewUserServer(mockRepo)
+
+			arg := &userpb.DeleteUserRequest{Id: tt.inpID}
+
+			resp, err := server.DeleteUser(context.Background(), arg)
+			if tt.expCode == codes.OK {
+				require.NoError(t, err)
+				require.NotNil(t, resp)
+				require.Equal(t, tt.expID, resp.Id)
+			} else {
+				require.Error(t, err)
+				require.Nil(t, resp)
+
+				st, ok := status.FromError(err)
+				require.True(t, ok)
+				require.Equal(t, tt.expCode, st.Code())
+			}
+
+			mockRepo.AssertExpectations(t)
+		})
+	}
+}
