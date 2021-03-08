@@ -6,6 +6,7 @@ package repo
 import (
 	"context"
 	"database/sql"
+	"time"
 
 	"github.com/google/uuid"
 )
@@ -95,26 +96,26 @@ func (q *Queries) GetUser(ctx context.Context, id uuid.UUID) (User, error) {
 
 const updateUser = `-- name: UpdateUser :one
 update users
-set email           = case when coalesce($1, '') = '' then email else $1 end,
-    phone_number    = case when coalesce($2, '') = '' then phone_number else $2 end,
-    hashed_password = case when coalesce($3, '') = '' then hashed_password else $3 end,
-    first_name      = case when coalesce($4, '') = '' then first_name else $4 end,
-    last_name       = case when coalesce($5, '') = '' then last_name else $5 end,
-    gender          = case when coalesce($6, '') = '' then gender else $6 end,
-    birth_day       = case when coalesce($7, '') = '' then birth_day else $7 end
+set email           = case when coalesce($1::varchar(64), '') = '' then email else $1 end,
+    phone_number    = case when coalesce($2::varchar(32), '') = '' then phone_number else $2 end,
+    hashed_password = case when coalesce($3::varchar, '') = '' then hashed_password else $3 end,
+    first_name      = case when coalesce($4::varchar(64), '') = '' then first_name else $4 end,
+    last_name       = case when coalesce($5::varchar(64), '') = '' then last_name else $5 end,
+    gender          = case when coalesce($6::smallint, '') = '' then gender else $6 end,
+    birth_day       = case when coalesce($7::date, '') = '' then birth_day else $7 end
 where id = $8
 returning id, email, phone_number, hashed_password, first_name, last_name, gender, birth_day, updated_at, created_at
 `
 
 type UpdateUserParams struct {
-	Email          interface{} `json:"email"`
-	PhoneNumber    interface{} `json:"phoneNumber"`
-	HashedPassword interface{} `json:"hashedPassword"`
-	FirstName      interface{} `json:"firstName"`
-	LastName       interface{} `json:"lastName"`
-	Gender         interface{} `json:"gender"`
-	BirthDay       interface{} `json:"birthDay"`
-	ID             uuid.UUID   `json:"id"`
+	Email          string    `json:"email"`
+	PhoneNumber    string    `json:"phoneNumber"`
+	HashedPassword string    `json:"hashedPassword"`
+	FirstName      string    `json:"firstName"`
+	LastName       string    `json:"lastName"`
+	Gender         int16     `json:"gender"`
+	BirthDay       time.Time `json:"birthDay"`
+	ID             uuid.UUID `json:"id"`
 }
 
 func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (User, error) {
