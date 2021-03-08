@@ -362,6 +362,20 @@ func TestUserServer_DeleteUser(t *testing.T) {
 			expCode: codes.OK,
 		},
 		{
+			name:      "missing id",
+			buildRepo: func(q *mocks.Querier) {},
+			inpID:     "",
+			expID:     "",
+			expCode:   codes.InvalidArgument,
+		},
+		{
+			name:      "invalid id",
+			buildRepo: func(q *mocks.Querier) {},
+			inpID:     "invalid",
+			expID:     "",
+			expCode:   codes.InvalidArgument,
+		},
+		{
 			name: "not found",
 			buildRepo: func(q *mocks.Querier) {
 				q.On("DeleteUser", mock.Anything, uuid.MustParse(u1.Id)).Return(int64(0), nil)
@@ -411,6 +425,7 @@ func TestUserServer_DeleteUser(t *testing.T) {
 				st, ok := status.FromError(err)
 				require.True(t, ok)
 				require.Equal(t, tt.expCode, st.Code())
+				require.Empty(t, tt.expID)
 			}
 
 			mockRepo.AssertExpectations(t)
