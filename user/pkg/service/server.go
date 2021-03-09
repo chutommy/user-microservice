@@ -152,7 +152,72 @@ func (u *UserServer) GetUser(ctx context.Context, req *userpb.GetUserRequest) (*
 }
 
 func (u *UserServer) UpdateUser(ctx context.Context, req *userpb.UpdateUserRequest) (*userpb.UpdateUserResponse, error) {
-	panic("implement me")
+	user := req.GetUser()
+
+	id := req.GetId()
+	if id == "" {
+		return nil, status.Errorf(codes.InvalidArgument, "%v: 'id' field", ErrEmptyField)
+	}
+
+	// process id
+	uid, err := uuid.Parse(id)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "invalid id '%v': does not follow UUID pattern", id)
+	}
+
+	// process password
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.GetPassword()), bcrypt.DefaultCost)
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "fail to hash password")
+	}
+
+	// process birthday
+	var bdTime time.Time
+	if bd := user.GetBirthday(); bd != "" {
+		bdTime, err = time.Parse(ShortForm, bd)
+		if err != nil {
+			return nil, status.Errorf(codes.InvalidArgument, "field time is in unsupported format: %v instead of %v", err, ShortForm)
+		}
+	}
+
+	// construct na argument
+	arg := repo.UpdateUserParams{
+		ID: uid,
+
+		Email:          user.GetEmail(),
+		PhoneNumber:    user.GetPhone(),
+		HashedPassword: string(hashedPassword),
+		FirstName:      user.GetFirstName(),
+		LastName:       user.GetLastName(),
+		Gender:         int16(user.GetGender()),
+		BirthDay:       bdTime,
+	}
+
+	// update user
+	updUser, err := u.repo.UpdateUser(ctx, arg)
+	if err != nil {
+		code := codes.Internal
+
+		if errors.Is(err, sql.ErrNoRows) {
+			code = codes.NotFound
+		}
+
+		var pqErr *pq.Error
+		if errors.As(err, &pqErr) {
+			if pqErr.Code == "23505" {
+				code = codes.AlreadyExists
+			}
+		}
+
+		return nil, status.Errorf(code, "failed to update user with an id '%s'", id)
+	}
+
+	// construct a response
+	resp := &userpb.UpdateUserResponse{
+		Id: updUser.ID.String(),
+	}
+
+	return resp, nil
 }
 
 func (u *UserServer) DeleteUser(ctx context.Context, req *userpb.DeleteUserRequest) (*userpb.DeleteUserResponse, error) {
