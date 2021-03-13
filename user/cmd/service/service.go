@@ -10,6 +10,9 @@ import (
 	"syscall"
 	"time"
 
+	gmdw "github.com/grpc-ecosystem/go-grpc-middleware"
+	gzap "github.com/grpc-ecosystem/go-grpc-middleware/logging/zap"
+	gtags "github.com/grpc-ecosystem/go-grpc-middleware/tags"
 	_ "github.com/lib/pq"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
@@ -21,7 +24,7 @@ import (
 
 var fs = flag.NewFlagSet("user", flag.ExitOnError)
 var debugMode = fs.Bool("debug", false, "enable development level logging")
-var httpPort = fs.String("http-port", "8081", "HTTP listen address port")
+var _ = fs.String("http-port", "8081", "HTTP listen address port")
 var grpcPort = fs.String("grpc-port", "8082", "gRPC listen address port")
 var dbURL = fs.String("db_url", "", "database URL of the user service")
 
@@ -82,9 +85,17 @@ func Run() (err error) {
 	// construct a repo
 	qrs := repo.New(db)
 
+	// build a logger interceptor middleware
+	opts := []gzap.Option{}
+
 	// init user service's server
 	userSrv := service.NewUserServer(qrs)
-	grpcSrv := grpc.NewServer()
+	grpcSrv := grpc.NewServer(
+		gmdw.WithUnaryServerChain(
+			gtags.UnaryServerInterceptor(gtags.WithFieldExtractor(gtags.CodeGenRequestFieldExtractor)),
+			gzap.UnaryServerInterceptor(logger, opts...),
+		),
+	)
 	userpb.RegisterUserServiceServer(grpcSrv, userSrv)
 
 	// listen

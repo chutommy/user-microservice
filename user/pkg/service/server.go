@@ -30,6 +30,8 @@ type UserServer struct {
 	userpb.UnimplementedUserServiceServer
 
 	repo repo.Querier
+
+	// TODO: add logger middleware
 }
 
 // NewUserServer constructs a UserServer.
