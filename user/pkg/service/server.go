@@ -7,7 +7,9 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/grpc-ecosystem/go-grpc-middleware/logging/zap/ctxzap"
 	"github.com/lib/pq"
+	"go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -42,22 +44,28 @@ func NewUserServer(repo repo.Querier) *UserServer {
 }
 
 func (u *UserServer) RegisterUser(ctx context.Context, req *userpb.RegisterUserRequest) (*userpb.RegisterUserResponse, error) {
+	logger := ctxzap.Extract(ctx)
 	user := req.GetUser()
 
 	switch {
 	case user.GetEmail() == "":
+		logger.Info("empty email")
 		return nil, status.Errorf(codes.InvalidArgument, "%v: 'email' field", ErrEmptyField)
 	case user.GetPassword() == "":
+		logger.Info("empty password")
 		return nil, status.Errorf(codes.InvalidArgument, "%v: 'password' field", ErrEmptyField)
 	case user.GetFirstName() == "":
+		logger.Info("empty first name")
 		return nil, status.Errorf(codes.InvalidArgument, "%v: 'first_name' field", ErrEmptyField)
 	case user.GetLastName() == "":
+		logger.Info("empty last name")
 		return nil, status.Errorf(codes.InvalidArgument, "%v: 'last_name' field", ErrEmptyField)
 	}
 
 	// process password
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.GetPassword()), bcrypt.DefaultCost)
 	if err != nil {
+		logger.Error("failed to hash the password", zap.Error(err))
 		return nil, status.Errorf(codes.Internal, "fail to hash password")
 	}
 
@@ -66,6 +74,7 @@ func (u *UserServer) RegisterUser(ctx context.Context, req *userpb.RegisterUserR
 	if bd := user.GetBirthday(); bd != "" {
 		parsedBD, err := time.Parse(ShortForm, bd)
 		if err != nil {
+			logger.Info("failed to parse birthday", zap.Error(err))
 			return nil, status.Errorf(codes.InvalidArgument, "field time is in unsupported format: %v instead of %v", err, ShortForm)
 		}
 
@@ -102,6 +111,7 @@ func (u *UserServer) RegisterUser(ctx context.Context, req *userpb.RegisterUserR
 			}
 		}
 
+		logger.Error("failed to create a new user", zap.Error(err))
 		return nil, status.Errorf(code, "cannot create a new user: %v", err)
 	}
 
@@ -114,14 +124,18 @@ func (u *UserServer) RegisterUser(ctx context.Context, req *userpb.RegisterUserR
 }
 
 func (u *UserServer) GetUser(ctx context.Context, req *userpb.GetUserRequest) (*userpb.GetUserResponse, error) {
+	logger := ctxzap.Extract(ctx)
+
 	id := req.GetId()
 	if id == "" {
+		logger.Info("empty id")
 		return nil, status.Errorf(codes.InvalidArgument, "%v: 'id' field", ErrEmptyField)
 	}
 
 	// parse ID
 	uid, err := uuid.Parse(id)
 	if err != nil {
+		logger.Info("invalid uuid", zap.String("uuid", id), zap.Error(err))
 		return nil, status.Errorf(codes.InvalidArgument, "invalid id '%v': does not follow UUID pattern", id)
 	}
 
@@ -134,6 +148,7 @@ func (u *UserServer) GetUser(ctx context.Context, req *userpb.GetUserRequest) (*
 			code = codes.NotFound
 		}
 
+		logger.Error("retrieve user", zap.Error(err))
 		return nil, status.Errorf(code, "failed to retrieve user with id: %s", id)
 	}
 
@@ -154,22 +169,26 @@ func (u *UserServer) GetUser(ctx context.Context, req *userpb.GetUserRequest) (*
 }
 
 func (u *UserServer) UpdateUser(ctx context.Context, req *userpb.UpdateUserRequest) (*userpb.UpdateUserResponse, error) {
+	logger := ctxzap.Extract(ctx)
 	user := req.GetUser()
 
 	id := req.GetId()
 	if id == "" {
+		logger.Info("empty id")
 		return nil, status.Errorf(codes.InvalidArgument, "%v: 'id' field", ErrEmptyField)
 	}
 
 	// process id
 	uid, err := uuid.Parse(id)
 	if err != nil {
+		logger.Info("invalid uuid id", zap.Error(err))
 		return nil, status.Errorf(codes.InvalidArgument, "invalid id '%v': does not follow UUID pattern", id)
 	}
 
 	// process password
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.GetPassword()), bcrypt.DefaultCost)
 	if err != nil {
+		logger.Error("invalid hashed password", zap.Error(err))
 		return nil, status.Errorf(codes.Internal, "fail to hash password")
 	}
 
@@ -178,6 +197,7 @@ func (u *UserServer) UpdateUser(ctx context.Context, req *userpb.UpdateUserReque
 	if bd := user.GetBirthday(); bd != "" {
 		bdTime, err = time.Parse(ShortForm, bd)
 		if err != nil {
+			logger.Info("invalid birthday format")
 			return nil, status.Errorf(codes.InvalidArgument, "field time is in unsupported format: %v instead of %v", err, ShortForm)
 		}
 	}
@@ -211,6 +231,7 @@ func (u *UserServer) UpdateUser(ctx context.Context, req *userpb.UpdateUserReque
 			}
 		}
 
+		logger.Error("failed to update user", zap.Error(err))
 		return nil, status.Errorf(code, "failed to update user with an id '%s'", id)
 	}
 
@@ -223,24 +244,32 @@ func (u *UserServer) UpdateUser(ctx context.Context, req *userpb.UpdateUserReque
 }
 
 func (u *UserServer) DeleteUser(ctx context.Context, req *userpb.DeleteUserRequest) (*userpb.DeleteUserResponse, error) {
+	logger := ctxzap.Extract(ctx)
+
 	id := req.GetId()
 	if id == "" {
+		logger.Info("empty id")
 		return nil, status.Errorf(codes.InvalidArgument, "%v: 'id' field", ErrEmptyField)
 	}
 
 	// parse ID
 	uid, err := uuid.Parse(id)
 	if err != nil {
+		logger.Info("infalid uuid id", zap.Error(err))
 		return nil, status.Errorf(codes.InvalidArgument, "invalid id '%v': does not follow UUID pattern", id)
 	}
 
 	// remove user
 	affected, err := u.repo.DeleteUser(ctx, uid)
-	if err != nil || affected > 1 {
-		return nil, status.Errorf(codes.Internal, "failed to delete user with id: %s", id)
-	}
-	if affected == 0 {
-		return nil, status.Errorf(codes.NotFound, "failed to delete user with id: %s", id)
+	if err != nil || affected != 1 {
+		code := codes.Internal
+
+		if affected == 0 {
+			code = codes.NotFound
+		}
+
+		logger.Info("failed to delete user", zap.Error(err))
+		return nil, status.Errorf(code, "failed to delete user with id: %s", id)
 	}
 
 	// construct response
