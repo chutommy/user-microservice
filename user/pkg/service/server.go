@@ -264,7 +264,7 @@ func (u *UserServer) DeleteUser(ctx context.Context, req *userpb.DeleteUserReque
 	if err != nil || affected != 1 {
 		code := codes.Internal
 
-		if affected == 0 {
+		if affected == 0 && err == nil {
 			code = codes.NotFound
 		}
 
