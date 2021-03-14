@@ -16,6 +16,7 @@ import (
 	_ "github.com/lib/pq"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 
 	"github.com/chutified/booking-terminal/user/pkg/grpc/userpb"
 	"github.com/chutified/booking-terminal/user/pkg/repo"
@@ -97,6 +98,7 @@ func Run() (err error) {
 		),
 	)
 	userpb.RegisterUserServiceServer(grpcSrv, userSrv)
+	reflection.Register(grpcSrv)
 
 	// listen
 	address := fmt.Sprintf("0.0.0.0:%s", *grpcPort)
