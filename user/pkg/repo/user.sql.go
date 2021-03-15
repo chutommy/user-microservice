@@ -107,7 +107,7 @@ set email           = case when coalesce($1::varchar(64), '') = '' then email el
                           else $3 end,
     first_name      = case when coalesce($4::varchar(64), '') = '' then first_name else $4 end,
     last_name       = case when coalesce($5::varchar(64), '') = '' then last_name else $5 end,
-    gender          = case when coalesce($6::smallint, 0) = '' then gender else $6 end,
+    gender          = case when coalesce($6::smallint, 0) = 0 then gender else $6 end,
     birth_day       = case when $7::date = '0001-01-01' then birth_day else $7 end
 where id = $8
 returning id, email, phone_number, hashed_password, first_name, last_name, gender, birth_day, updated_at, created_at

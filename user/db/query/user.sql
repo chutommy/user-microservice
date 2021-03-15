@@ -18,7 +18,7 @@ set email           = case when coalesce(@email::varchar(64), '') = '' then emai
                           else @hashed_password end,
     first_name      = case when coalesce(@first_name::varchar(64), '') = '' then first_name else @first_name end,
     last_name       = case when coalesce(@last_name::varchar(64), '') = '' then last_name else @last_name end,
-    gender          = case when coalesce(@gender::smallint, 0) = '' then gender else @gender end,
+    gender          = case when coalesce(@gender::smallint, 0) = 0 then gender else @gender end,
     birth_day       = case when @birth_day::date = '0001-01-01' then birth_day else @birth_day end
 where id = @id
 returning *;
