@@ -188,10 +188,13 @@ func (u *UserServer) UpdateUser(ctx context.Context, req *userpb.UpdateUserReque
 	}
 
 	// process password
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.GetPassword()), bcrypt.DefaultCost)
-	if err != nil {
-		logger.Error("invalid hashed password", zap.Error(err))
-		return nil, status.Errorf(codes.Internal, "fail to hash password")
+	var hashedPassword []byte
+	if p := user.GetPassword(); p != "" {
+		hashedPassword, err = bcrypt.GenerateFromPassword([]byte(p), bcrypt.DefaultCost)
+		if err != nil {
+			logger.Error("invalid hashed password", zap.Error(err))
+			return nil, status.Errorf(codes.Internal, "fail to hash password")
+		}
 	}
 
 	// process birthday
