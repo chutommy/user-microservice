@@ -161,8 +161,10 @@ func (u *UserServer) GetUser(ctx context.Context, req *userpb.GetUserRequest) (*
 			FirstName: user.FirstName,
 			LastName:  user.LastName,
 			Gender:    userpb.User_Gender(user.Gender),
-			Birthday:  user.BirthDay.Time.Format(ShortForm),
 		},
+	}
+	if user.BirthDay.Valid {
+		resp.User.Birthday = user.BirthDay.Time.Format(ShortForm)
 	}
 
 	return resp, nil
