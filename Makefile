@@ -34,6 +34,10 @@ mockery-querier:
 run:
 	go run cmd/main.go -debug -db_url=$(USER_DB_CONN) -grpc-port="8082"
 
+.PHONY: build
+build:
+	go build -v ./...
+
 .PHONY: test
 test:
 	go test -v ./...
