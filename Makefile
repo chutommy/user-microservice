@@ -3,6 +3,11 @@ proto-gen:
 	protoc --proto_path=pkg/grpc/proto \
 	--go_out=pkg/grpc/userpb --go_opt=paths=source_relative \
 	--go-grpc_out=pkg/grpc/userpb --go-grpc_opt=paths=source_relative \
+	--grpc-gateway_out=pkg/grpc/userpb \
+	--grpc-gateway_opt logtostderr=true \
+	--grpc-gateway_opt paths=source_relative \
+	--openapiv2_out=swagger \
+	--openapiv2_opt logtostderr=true \
 	pkg/grpc/proto/*.proto
 
 .PHONY: migrate-new
