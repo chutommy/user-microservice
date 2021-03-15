@@ -1,7 +1,9 @@
 .PHONY: proto-gen
 proto-gen:
-	protoc --proto_path=pkg/grpc/proto --go_out=pkg/grpc/userpb --go_opt=paths=source_relative \
-	--go-grpc_out=pkg/grpc/userpb --go-grpc_opt=paths=source_relative pkg/grpc/proto/*.proto
+	protoc --proto_path=pkg/grpc/proto \
+	--go_out=pkg/grpc/userpb --go_opt=paths=source_relative \
+	--go-grpc_out=pkg/grpc/userpb --go-grpc_opt=paths=source_relative \
+	pkg/grpc/proto/*.proto
 
 .PHONY: migrate-new
 migrate-new:
@@ -23,8 +25,8 @@ sqlc:
 mockery-querier:
 	docker run --rm -v $(PWD):/pkg -w /pkg vektra/mockery --case camel --dir pkg/repo --outpkg mocks --output pkg/mocks --name Querier
 
-.PHONY: gorun
-gorun:
+.PHONY: run
+run:
 	go run cmd/main.go -debug -db_url=$(USER_DB_CONN) -grpc-port="8082"
 
 .PHONY: postgres
