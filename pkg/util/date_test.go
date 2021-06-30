@@ -6,7 +6,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/chutified/user-microservice/pkg/util"
+	"github.com/chutommy/user-microservice/pkg/util"
 )
 
 func TestValidateDate(t *testing.T) {

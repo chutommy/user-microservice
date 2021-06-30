@@ -18,9 +18,9 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 
-	"github.com/chutified/user-microservice/pkg/grpc/userpb"
-	"github.com/chutified/user-microservice/pkg/repo"
-	"github.com/chutified/user-microservice/pkg/service"
+	"github.com/chutommy/user-microservice/pkg/grpc/userpb"
+	"github.com/chutommy/user-microservice/pkg/repo"
+	"github.com/chutommy/user-microservice/pkg/service"
 )
 
 var fs = flag.NewFlagSet("user", flag.ExitOnError)

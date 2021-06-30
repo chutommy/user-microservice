@@ -1,4 +1,4 @@
-module github.com/chutified/user-microservice
+module github.com/chutommy/user-microservice
 
 go 1.15
 

@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-option go_package = "github.com/chutified/user-microservice/pkg/grpc/userpb;userpb";
+option go_package = "github.com/chutommy/user-microservice/pkg/grpc/userpb;userpb";
 
 package user;
 

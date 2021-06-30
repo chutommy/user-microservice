@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/chutified/user-microservice/cmd/service"
+	"github.com/chutommy/user-microservice/cmd/service"
 )
 
 func main() {

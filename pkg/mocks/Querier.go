@@ -5,7 +5,7 @@ package mocks
 import (
 	context "context"
 
-	repo "github.com/chutified/user-microservice/pkg/repo"
+	repo "github.com/chutommy/user-microservice/pkg/repo"
 	mock "github.com/stretchr/testify/mock"
 
 	uuid "github.com/google/uuid"

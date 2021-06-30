@@ -14,8 +14,8 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"github.com/chutified/user-microservice/pkg/grpc/userpb"
-	"github.com/chutified/user-microservice/pkg/repo"
+	"github.com/chutommy/user-microservice/pkg/grpc/userpb"
+	"github.com/chutommy/user-microservice/pkg/repo"
 )
 
 var (
